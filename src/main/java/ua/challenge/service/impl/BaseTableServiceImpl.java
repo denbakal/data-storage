@@ -2,7 +2,7 @@ package ua.challenge.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ua.challenge.BaseTableDto;
+import ua.challenge.dto.BaseTableDto;
 import ua.challenge.mapper.BaseTableMapper;
 import ua.challenge.repository.BaseTableRepository;
 import ua.challenge.service.BaseTableService;

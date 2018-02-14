@@ -1,4 +1,4 @@
-package ua.challenge;
+package ua.challenge.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
