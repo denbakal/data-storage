@@ -1,13 +1,10 @@
 package ua.challenge.controller;
 
-import com.google.gson.JsonObject;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ua.challenge.service.BaseFieldValueService;
+import ua.challenge.type.StoreType;
 
 import java.util.List;
 
@@ -19,8 +16,14 @@ public class BaseFieldValueController {
 
     @PostMapping(value = "/field-values")
 //    @PostMapping(value = "/field-values", consumes = "text/plain")
-    public void storeData(@RequestBody List<String> values) {
-        log.info("Values: " + values.size());
-        baseFieldValueService.storeData(values);
+    public void storeData(@RequestBody List<String> values,
+                          @RequestParam(required = false) StoreType type) {
+        if (StoreType.CELL == type) {
+            this.baseFieldValueService.storeCellData(values);
+        } else if (StoreType.JSON == type) {
+            this.baseFieldValueService.storeJsonData(values);
+        } else {
+            this.baseFieldValueService.storeData(values);
+        }
     }
 }

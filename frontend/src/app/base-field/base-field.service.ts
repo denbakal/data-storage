@@ -14,8 +14,8 @@ export class BaseFieldService {
                     .map((response) => response as BaseField[]);
   }
 
-  public getFieldValuesByBaseTableId(baseTableId: number): Observable<any[]> {
-    return this.http.get(`/base-tables/${baseTableId}/field-values`)
+  public getFieldValuesByBaseTableId(baseTableId: number, type: string): Observable<any[]> {
+    return this.http.get(`/base-tables/${baseTableId}/field-values?type=${type}`)
       .map((response) => response as any[]);
   }
 
@@ -24,8 +24,8 @@ export class BaseFieldService {
              .map(response => response.status as number)
   }
 
-  public storeData(data: any[]): Observable<number> {
-    return this.http.post('/field-values', data, {observe: 'response', responseType: 'text'})
+  public storeData(data: any[], type: string): Observable<number> {
+    return this.http.post(`/field-values?type=${type}`, data, {observe: 'response', responseType: 'text'})
       .map(response => response.status as number)
   }
 
@@ -34,8 +34,8 @@ export class BaseFieldService {
       .map(response => response.status as number);
   }
 
-  public removeData(baseTableId: number): Observable<number> {
-    return this.http.delete(`/base-tables/${baseTableId}/field-values`, {observe: 'response', responseType: 'text'})
+  public removeData(baseTableId: number, type: string): Observable<number> {
+    return this.http.delete(`/base-tables/${baseTableId}/field-values?type=${type}`, {observe: 'response', responseType: 'text'})
         .map(response => response.status as number);
   }
 }

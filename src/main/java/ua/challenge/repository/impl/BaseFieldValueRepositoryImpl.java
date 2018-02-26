@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ua.challenge.entity.BaseFieldValue;
+import ua.challenge.entity.QBaseFieldValue;
 import ua.challenge.repository.BaseFieldValueRepository;
 
 import java.sql.Array;
@@ -30,5 +31,19 @@ public class BaseFieldValueRepositoryImpl extends BaseRepositoryImpl<BaseFieldVa
     @Override
     public List<String> findFieldValuesByBaseTableId(Long id) {
         return this.entityManager.createNativeQuery("select cast(lane_value as text) from lane_value").getResultList();
+    }
+
+    @Override
+    public void delete(Long id) {
+        QBaseFieldValue baseFieldValue = QBaseFieldValue.baseFieldValue;
+        this.queryFactory.delete(baseFieldValue).execute();
+    }
+
+    @Override
+    public List<BaseFieldValue> findByBaseLaneId(Long laneId) {
+        QBaseFieldValue baseFieldValue = QBaseFieldValue.baseFieldValue;
+
+        return this.queryFactory.selectFrom(baseFieldValue)
+                .where(baseFieldValue.laneId.eq(laneId)).orderBy(baseFieldValue.id.asc()).fetch();
     }
 }

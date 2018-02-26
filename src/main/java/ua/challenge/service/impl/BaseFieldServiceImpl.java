@@ -21,7 +21,7 @@ public class BaseFieldServiceImpl implements BaseFieldService {
 
     @Override
     public List<BaseFieldDto> getFieldsByBaseTableId(Long baseTableId) {
-        return baseFieldMapper.fromBaseFieldkList(baseFieldRepository.findAllByBaseTableId(baseTableId));
+        return baseFieldMapper.fromBaseFieldList(baseFieldRepository.findAllByBaseTableId(baseTableId));
     }
 
     @Override

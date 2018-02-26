@@ -48,7 +48,7 @@ export class JsonValueComponent implements OnInit {
       });
 
     this.baseFieldService
-      .getFieldValuesByBaseTableId(JsonValueComponent.BASE_TABLE_ID)
+      .getFieldValuesByBaseTableId(JsonValueComponent.BASE_TABLE_ID, 'JSON')
       .subscribe((data) => {
         console.log('Count of getting data: ' + data.length);
         this.data = [];
@@ -100,7 +100,7 @@ export class JsonValueComponent implements OnInit {
     this.data.forEach(d => {
       array.push(JSON.stringify(d));
     });
-    this.baseFieldService.storeData(array)
+    this.baseFieldService.storeData(array, 'JSON')
       .subscribe((status) => {
         if (status === 200) {
           this.isSaving = false;
@@ -109,7 +109,7 @@ export class JsonValueComponent implements OnInit {
   }
 
   removeData() {
-    this.baseFieldService.removeData(JsonValueComponent.BASE_TABLE_ID)
+    this.baseFieldService.removeData(JsonValueComponent.BASE_TABLE_ID, 'JSON')
       .subscribe((status) => {
         if (status === 200) {
           this.initData();

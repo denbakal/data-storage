@@ -8,6 +8,7 @@ import ua.challenge.dto.BaseTableDto;
 import ua.challenge.service.BaseFieldService;
 import ua.challenge.service.BaseFieldValueService;
 import ua.challenge.service.BaseTableService;
+import ua.challenge.type.StoreType;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,13 +40,23 @@ public class BaseTableController {
     }
 
     @GetMapping("/base-tables/{id}/field-values")
-    public List<String> getFieldValues(@PathVariable Long id) {
-        return this.baseFieldValueService.getValues(id);
+    public List<String> getFieldValues(@PathVariable Long id,
+                                       @RequestParam(required = false) StoreType type) {
+        if (StoreType.CELL == type) {
+            return this.baseFieldValueService.getCellValues(id);
+        } else {
+            return this.baseFieldValueService.getValues(id);
+        }
     }
 
     @Loggable
     @DeleteMapping("/base-tables/{id}/field-values")
-    public void deleteFieldValues(@PathVariable Long id) {
-        this.baseFieldValueService.removeData(id);
+    public void deleteFieldValues(@PathVariable Long id,
+                                  @RequestParam(required = false) StoreType type) {
+        if (StoreType.CELL == type) {
+            this.baseFieldValueService.removeCellData(id);
+        } else {
+            this.baseFieldValueService.removeData(id);
+        }
     }
 }

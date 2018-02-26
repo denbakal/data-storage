@@ -8,4 +8,8 @@ public interface BaseFieldValueRepository extends BaseRepository<BaseFieldValue,
     void saveValues(List<String> values);
 
     List<String> findFieldValuesByBaseTableId(Long id);
+
+    void delete(Long id);
+
+    List<BaseFieldValue> findByBaseLaneId(Long laneId);
 }
