@@ -1,11 +1,14 @@
 package ua.challenge.service;
 
 import java.util.List;
+import java.util.Map;
 
 public interface BaseFieldValueService {
     void storeData(List<String> values);
 
     void storeJsonData(List<String> values);
+
+    void storeColumnData(List<Map<String, String>> data);
 
     List<String> getValues(Long id);
 

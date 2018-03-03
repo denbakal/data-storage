@@ -4,5 +4,6 @@ public enum StoreType {
     NONE,
     JSON,
     CELL,
+    CASSANDRA
     ;
 }

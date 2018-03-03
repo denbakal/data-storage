@@ -1,10 +1,10 @@
 package ua.challenge.service.impl;
 
-import lombok.extern.log4j.Log4j;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.springframework.data.cassandra.core.CassandraTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.challenge.aspect.Loggable;
@@ -12,7 +12,7 @@ import ua.challenge.dto.BaseFieldDto;
 import ua.challenge.dto.BaseFieldValueDto;
 import ua.challenge.dto.BaseLaneDto;
 import ua.challenge.dto.BaseLaneValueDto;
-import ua.challenge.entity.BaseField;
+import ua.challenge.entity.cassandra.TableData;
 import ua.challenge.mapper.BaseFieldValueMapper;
 import ua.challenge.mapper.BaseLaneMapper;
 import ua.challenge.mapper.BaseLaneValueMapper;
@@ -51,6 +51,9 @@ public class BaseFieldValueServiceImpl implements BaseFieldValueService {
     @Autowired
     private BaseLaneValueMapper baseLaneValueMapper;
 
+    @Autowired
+    private CassandraTemplate cassandraTemplate;
+
     @Override
     @Loggable
     public void storeData(List<String> values) {
@@ -72,6 +75,20 @@ public class BaseFieldValueServiceImpl implements BaseFieldValueService {
     public void storeJsonData(List<String> values) {
         final long BASE_TABLE_ID = 1L;
         baseFieldValueRepository.saveValues(values);
+    }
+
+    @Override
+    public void storeColumnData(List<Map<String, String>> data) {
+        final long TABLE_ID = 1L;
+        final long VERSION = 1L;
+        long rowIndex = 0;
+
+        for (Map<String, String> dataLane : data) {
+            for (Map.Entry<String, String> entry : dataLane.entrySet()) {
+                this.cassandraTemplate.insert(new TableData(TABLE_ID, VERSION, entry.getKey(), rowIndex, entry.getValue()));
+            }
+            rowIndex++;
+        }
     }
 
     @Override

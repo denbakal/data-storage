@@ -7,6 +7,7 @@ import ua.challenge.service.BaseFieldValueService;
 import ua.challenge.type.StoreType;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Log4j
@@ -22,8 +23,14 @@ public class BaseFieldValueController {
             this.baseFieldValueService.storeCellData(values);
         } else if (StoreType.JSON == type) {
             this.baseFieldValueService.storeJsonData(values);
+        } else if (StoreType.CASSANDRA == type) {
         } else {
             this.baseFieldValueService.storeData(values);
         }
+    }
+
+    @PostMapping(value = "/field-values/column-data-store")
+    public void storeColumnData(@RequestBody List<Map<String, String>> data) {
+        this.baseFieldValueService.storeColumnData(data);
     }
 }
