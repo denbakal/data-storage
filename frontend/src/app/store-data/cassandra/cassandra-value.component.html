@@ -1,0 +1,29 @@
+<!--<div style="padding: 10px">
+  <input [(ngModel)]="count" placeholder="Field count..."/>
+  <button (click)="generateColumns()">Generate fields</button>
+  <button (click)="remove()">Remove fields</button>
+</div>-->
+<div style="padding: 10px">
+  <!--<b>Field Count:</b> {{columns.length}}<br/>-->
+</div>
+<div style="padding: 10px">
+  <button (click)="loadData()">Load data</button>
+  <button (click)="saveData('INSERT')">Save data</button>
+  <button (click)="saveData('INGEST')">Ingest data</button>
+  <button (click)="saveData('ASYNC')">Async Save data</button>
+  <!--<button (click)="removeData()">Remove data</button>-->
+  <p [hidden]="!isLoading">Loading...</p>
+  <p [hidden]="!isSaving">Saving...</p>
+</div>
+<!--<div style="padding: 10px" *ngIf="columns.length > 0">-->
+  <hot-table
+    height="295"
+    fixedColumnsLeft="1"
+    startRows="5"
+    colWidths="100"
+    [settings]="settings"
+    [data]="data">
+    <!--<hot-column *ngFor="let column of columns" title="{{column.title}}">-->
+    <!--</hot-column>-->
+  </hot-table>
+<!--</div>-->

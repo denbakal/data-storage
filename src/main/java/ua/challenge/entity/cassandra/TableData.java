@@ -15,16 +15,16 @@ import org.springframework.data.cassandra.mapping.Table;
 @Table
 public class TableData {
     @PrimaryKeyColumn(name = "table_id", ordinal = 0, type = PrimaryKeyType.PARTITIONED)
-    private Long id;
+    private Integer id;
 
     @PrimaryKeyColumn(name = "version_id", ordinal = 1, type = PrimaryKeyType.PARTITIONED)
-    private Long version;
+    private Integer version;
 
     @PrimaryKeyColumn(name = "field_name", ordinal = 2, type = PrimaryKeyType.CLUSTERED)
     private String fieldName;
 
     @PrimaryKeyColumn(name = "row_index", ordinal = 3, type = PrimaryKeyType.CLUSTERED)
-    private Long rowIndex;
+    private Integer rowIndex;
 
     private String value;
 }

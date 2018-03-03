@@ -21,6 +21,7 @@ import ua.challenge.repository.BaseLaneRepository;
 import ua.challenge.repository.BaseLaneValueRepository;
 import ua.challenge.service.BaseFieldService;
 import ua.challenge.service.BaseFieldValueService;
+import ua.challenge.type.ColumnInsertType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,17 +79,53 @@ public class BaseFieldValueServiceImpl implements BaseFieldValueService {
     }
 
     @Override
-    public void storeColumnData(List<Map<String, String>> data) {
-        final long TABLE_ID = 1L;
-        final long VERSION = 1L;
-        long rowIndex = 0;
+    @Loggable
+    public void storeColumnData(List<Map<String, String>> data, ColumnInsertType type) {
+        final int TABLE_ID = 1;
+        final int VERSION = 1;
+        int rowIndex = 0;
 
-        for (Map<String, String> dataLane : data) {
-            for (Map.Entry<String, String> entry : dataLane.entrySet()) {
-                this.cassandraTemplate.insert(new TableData(TABLE_ID, VERSION, entry.getKey(), rowIndex, entry.getValue()));
+        if (ColumnInsertType.INSERT == type) {
+            for (Map<String, String> dataLane : data) {
+                for (Map.Entry<String, String> entry : dataLane.entrySet()) {
+                    this.cassandraTemplate.insert(new TableData(TABLE_ID, VERSION, entry.getKey(), rowIndex, entry.getValue()));
+                }
+                rowIndex++;
             }
-            rowIndex++;
+        } else if (ColumnInsertType.INGEST == type) {
+            String insertSql = "insert into tabledata(table_id, version_id, field_name, row_index, value) values (?, ?, ?, ?, ?)";
+            List<List<?>> tableData = new ArrayList<>();
+
+            long startTime = System.currentTimeMillis();
+            for (Map<String, String> dataLane : data) {
+                for (Map.Entry<String, String> entry : dataLane.entrySet()) {
+                    List<Object> newData = new ArrayList<>();
+                    newData.add(TABLE_ID);
+                    newData.add(VERSION);
+                    newData.add(entry.getKey());
+                    newData.add(rowIndex);
+                    newData.add(entry.getValue());
+
+                    tableData.add(newData);
+                }
+                rowIndex++;
+            }
+            System.out.println("elapsed time: " + (System.currentTimeMillis() - startTime));
+
+            this.cassandraTemplate.ingest(insertSql, tableData);
+        } else if (ColumnInsertType.ASYNC == type) {
+            for (Map<String, String> dataLane : data) {
+                for (Map.Entry<String, String> entry : dataLane.entrySet()) {
+                    this.cassandraTemplate.insertAsynchronously(new TableData(TABLE_ID, VERSION, entry.getKey(), rowIndex, entry.getValue()));
+                }
+                rowIndex++;
+            }
         }
+    }
+
+    @Override
+    public void removeColumnData() {
+        this.cassandraTemplate.truncate("datatable");
     }
 
     @Override
