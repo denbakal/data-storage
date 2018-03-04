@@ -12,6 +12,8 @@ public interface BaseFieldValueService {
 
     void storeColumnData(List<Map<String, String>> data, ColumnInsertType type);
 
+    void storeKeyValueData(List<String> data);
+
     void removeColumnData();
 
     List<String> getValues(Long id);

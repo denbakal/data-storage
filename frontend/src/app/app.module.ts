@@ -10,12 +10,14 @@ import {RouterModule, Routes} from "@angular/router";
 import {FormsModule} from "@angular/forms";
 import {CellValueComponent} from "./store-data/cell/cell-value.component";
 import {CassandraValueComponent} from "./store-data/cassandra/cassandra-value.component";
+import {RedisValueComponent} from "./store-data/redis/redis-value.component";
 
 const routes: Routes = [
   { path: '', redirectTo: '/store/json-value', pathMatch: 'full' },
   { path: 'store/json-value', component: JsonValueComponent },
   { path: 'store/cell-value', component: CellValueComponent },
-  { path: 'store/cassandra', component: CassandraValueComponent }
+  { path: 'store/cassandra', component: CassandraValueComponent },
+  { path: 'store/redis', component: RedisValueComponent }
 ];
 
 @NgModule({
@@ -23,7 +25,8 @@ const routes: Routes = [
     AppComponent,
     JsonValueComponent,
     CellValueComponent,
-    CassandraValueComponent
+    CassandraValueComponent,
+    RedisValueComponent
   ],
   imports: [
     BrowserModule,

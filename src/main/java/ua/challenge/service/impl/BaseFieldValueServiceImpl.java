@@ -1,10 +1,12 @@
 package ua.challenge.service.impl;
 
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.data.cassandra.core.CassandraTemplate;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.challenge.aspect.Loggable;
@@ -24,6 +26,7 @@ import ua.challenge.service.BaseFieldValueService;
 import ua.challenge.type.ColumnInsertType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -54,6 +57,9 @@ public class BaseFieldValueServiceImpl implements BaseFieldValueService {
 
     @Autowired
     private CassandraTemplate cassandraTemplate;
+
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
 
     @Override
     @Loggable
@@ -121,6 +127,28 @@ public class BaseFieldValueServiceImpl implements BaseFieldValueService {
                 rowIndex++;
             }
         }
+    }
+
+    @Override
+    @Loggable
+    public void storeKeyValueData(List<String> data) {
+        final long TABLE_ID = 2L;
+        int rowIndex = 0;
+
+        String laneKey = "count:lane:" + TABLE_ID;
+        this.redisTemplate.boundSetOps(laneKey).add(Integer.toString(data.size()));
+
+        /*for (String dataLane : data) {
+            String valueKey = "table:" + TABLE_ID + ":lane:" + rowIndex + ":fields";
+            this.redisTemplate.boundSetOps(valueKey).add(dataLane);
+            rowIndex++;
+        }*/
+
+        String valueKey = "table:" + TABLE_ID + ":fields";
+        this.redisTemplate.boundSetOps(valueKey).add(data.toArray(new String[] {}));
+
+        log.debug("Size of set data by lanes: {}", this.redisTemplate.boundSetOps(laneKey).size());
+        log.debug("Size of set data by fields: {}", this.redisTemplate.boundSetOps(valueKey).size());
     }
 
     @Override

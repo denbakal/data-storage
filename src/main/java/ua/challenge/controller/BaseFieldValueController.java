@@ -35,4 +35,9 @@ public class BaseFieldValueController {
                                 @RequestParam(required = false) ColumnInsertType type) {
         this.baseFieldValueService.storeColumnData(data, type == null ? ColumnInsertType.INSERT : type);
     }
+
+    @PostMapping(value = "/field-values/key-value-data-store")
+    public void storeKeyValueData(@RequestBody List<String> data) {
+        this.baseFieldValueService.storeKeyValueData(data);
+    }
 }

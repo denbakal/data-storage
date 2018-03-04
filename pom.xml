@@ -21,7 +21,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <swagger.version>2.6.1</swagger.version>
+        <swagger.version>2.8.0</swagger.version>
         <querydsl.version>4.1.4</querydsl.version>
         <mapstruct.version>1.2.0.Final</mapstruct.version>
         <hibernate.version>5.2.10.Final</hibernate.version>
@@ -84,6 +84,10 @@
                     <groupId>org.hibernate</groupId>
                     <artifactId>hibernate-entitymanager</artifactId>
                 </exclusion>
+                <!--<exclusion>
+                    <groupId>org.springframework.data</groupId>
+                    <artifactId>spring-data-commons</artifactId>
+                </exclusion>-->
             </exclusions>
         </dependency>
         <dependency>
@@ -270,6 +274,23 @@
             <optional>true</optional>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-redis</artifactId>
+            <version>1.8.10.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>2.9.0</version>
+            <type>jar</type>
+        </dependency>
+        <!--<dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-commons</artifactId>
+            <version>2.0.3.RELEASE</version>
+        </dependency>-->
+
     </dependencies>
 
     <build>
@@ -348,7 +369,7 @@
                     <workingDirectory>frontend</workingDirectory>
                     <installDirectory>temp</installDirectory>
                 </configuration>
-                <executions>
+                <!--<executions>
                     <execution>
                         <id>install node and yarn</id>
                         <goals>
@@ -387,7 +408,7 @@
                             <arguments>build</arguments>
                         </configuration>
                     </execution>
-                </executions>
+                </executions>-->
             </plugin>
         </plugins>
     </build>

@@ -44,4 +44,9 @@ export class BaseFieldService {
         .map(response => response.status as number);
   }
 
+  public storeRedisData(data: any[]): Observable<number> {
+    return this.http.post(`/field-values/key-value-data-store`, data, {observe: 'response', responseType: 'text'})
+      .map(response => response.status as number);
+  }
+
 }
