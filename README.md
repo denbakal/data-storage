@@ -16,3 +16,22 @@ docker run -it --link data-redis:redis --rm redis redis-cli -h redis -p 6379
 
 Commands:
 CONFIG GET databases
+
+<h3>MongoDB:</h3>
+docker run --name data-mongo -d -p 27017:27017 mongo
+docker exec -it data-mongo bash
+mongo
+
+Commands:
+show dbs
+use testdb
+db
+show collections
+db.createCollection("accounts")
+db.users.find()
+db.stats()
+db.users.find().limit(3)
+db.users.find().skip(3)
+var cursor = db.users.find(); null;
+db.users.count()
+db.users.drop()
