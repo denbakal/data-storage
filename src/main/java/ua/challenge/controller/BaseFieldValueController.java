@@ -40,4 +40,9 @@ public class BaseFieldValueController {
     public void storeKeyValueData(@RequestBody List<String> data) {
         this.baseFieldValueService.storeKeyValueData(data);
     }
+
+    @PostMapping(value = "/field-values/document-data-store")
+    public void storeDocumentData(@RequestBody List<String> data) {
+        this.baseFieldValueService.storeDocumentData(data);
+    }
 }

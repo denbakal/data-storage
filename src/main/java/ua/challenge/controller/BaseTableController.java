@@ -44,17 +44,24 @@ public class BaseTableController {
                                        @RequestParam(required = false) StoreType type) {
         if (StoreType.CELL == type) {
             return this.baseFieldValueService.getCellValues(id);
+        } else if (StoreType.MONGO == type) {
+            return this.baseFieldValueService.getDocumentValues(id);
+        } else if (StoreType.REDIS == type) {
+            return this.baseFieldValueService.getKeyValues(id);
         } else {
             return this.baseFieldValueService.getValues(id);
         }
     }
 
-    @Loggable
     @DeleteMapping("/base-tables/{id}/field-values")
     public void deleteFieldValues(@PathVariable Long id,
                                   @RequestParam(required = false) StoreType type) {
         if (StoreType.CELL == type) {
             this.baseFieldValueService.removeCellData(id);
+        } else if (StoreType.MONGO == type) {
+            this.baseFieldValueService.removeDocumentData();
+        } else if (StoreType.REDIS == type) {
+            this.baseFieldValueService.removeKeyValueData();
         } else {
             this.baseFieldValueService.removeData(id);
         }

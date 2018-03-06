@@ -2,14 +2,13 @@ import {Component, OnInit} from '@angular/core';
 import {BaseFieldService} from "../../base-field/base-field.service";
 import {isNumeric} from "rxjs/util/isNumeric";
 import {CellValueComponent} from "../cell/cell-value.component";
-import {MongoValueComponent} from "../mongo/mongo-value.component";
 
 @Component({
   selector: 'redis-value',
-  templateUrl: 'redis-value.component.html'
+  templateUrl: 'mongo-value.component.html'
 })
 
-export class RedisValueComponent implements OnInit {
+export class MongoValueComponent implements OnInit {
   static BASE_TABLE_ID: number = 1;
   static DEFAULT_LANE_COUNT: number = 15000;
 
@@ -40,7 +39,7 @@ export class RedisValueComponent implements OnInit {
 
   initData() {
     this.baseFieldService
-      .getFieldValuesByBaseTableId(RedisValueComponent.BASE_TABLE_ID, 'REDIS')
+      .getFieldValuesByBaseTableId(MongoValueComponent.BASE_TABLE_ID, 'MONGO')
       .subscribe((data) => {
         console.log('Count of getting data: ' + data.length);
         this.data = [];
@@ -60,7 +59,7 @@ export class RedisValueComponent implements OnInit {
   loadData() {
     this.isLoading = true;
     this.data = [];
-    for (let i = 0; i < RedisValueComponent.DEFAULT_LANE_COUNT; i++) {
+    for (let i = 0; i < MongoValueComponent.DEFAULT_LANE_COUNT; i++) {
       this.data.push({FROM:"DE" + i, TO:"UA", SERVICE:"Standard"});
     }
     this.isLoading = false;
@@ -92,7 +91,7 @@ export class RedisValueComponent implements OnInit {
     this.data.forEach(d => {
       array.push(JSON.stringify(d));
     });
-    this.baseFieldService.storeRedisData(array)
+    this.baseFieldService.storeMongoData(array)
       .subscribe((status) => {
         if (status === 200) {
           this.isSaving = false;
@@ -101,7 +100,7 @@ export class RedisValueComponent implements OnInit {
   }
 
   removeData() {
-    this.baseFieldService.removeData(CellValueComponent.BASE_TABLE_ID, 'REDIS')
+    this.baseFieldService.removeData(CellValueComponent.BASE_TABLE_ID, 'MONGO')
       .subscribe((status) => {
         if (status === 200) {
           this.initData();

@@ -25,4 +25,14 @@ public interface BaseFieldValueService {
     void removeCellData(Long id);
 
     List<String> getCellValues(Long id);
+
+    List<String> getDocumentValues(Long id);
+
+    void storeDocumentData(List<String> data);
+
+    void removeDocumentData();
+
+    void removeKeyValueData();
+
+    List<String> getKeyValues(Long id);
 }

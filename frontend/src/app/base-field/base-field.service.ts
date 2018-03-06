@@ -49,4 +49,9 @@ export class BaseFieldService {
       .map(response => response.status as number);
   }
 
+  public storeMongoData(data: any[]): Observable<number> {
+    return this.http.post(`/field-values/document-data-store`, data, {observe: 'response', responseType: 'text'})
+      .map(response => response.status as number);
+  }
+
 }

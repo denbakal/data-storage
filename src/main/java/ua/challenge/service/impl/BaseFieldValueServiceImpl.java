@@ -5,7 +5,11 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.cassandra.core.CassandraTemplate;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.connection.StringRedisConnection;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,20 +19,19 @@ import ua.challenge.dto.BaseFieldValueDto;
 import ua.challenge.dto.BaseLaneDto;
 import ua.challenge.dto.BaseLaneValueDto;
 import ua.challenge.entity.cassandra.TableData;
+import ua.challenge.entity.mongo.TableValue;
 import ua.challenge.mapper.BaseFieldValueMapper;
 import ua.challenge.mapper.BaseLaneMapper;
 import ua.challenge.mapper.BaseLaneValueMapper;
 import ua.challenge.repository.BaseFieldValueRepository;
 import ua.challenge.repository.BaseLaneRepository;
 import ua.challenge.repository.BaseLaneValueRepository;
+import ua.challenge.repository.mongo.TableValueRepository;
 import ua.challenge.service.BaseFieldService;
 import ua.challenge.service.BaseFieldValueService;
 import ua.challenge.type.ColumnInsertType;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -60,6 +63,9 @@ public class BaseFieldValueServiceImpl implements BaseFieldValueService {
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
+
+    @Autowired
+    private TableValueRepository tableValueRepository;
 
     @Override
     @Loggable
@@ -145,7 +151,16 @@ public class BaseFieldValueServiceImpl implements BaseFieldValueService {
         }*/
 
         String valueKey = "table:" + TABLE_ID + ":fields";
-        this.redisTemplate.boundSetOps(valueKey).add(data.toArray(new String[] {}));
+//        this.redisTemplate.boundSetOps(valueKey).add(data.toArray(new String[] {}));
+        this.redisTemplate.executePipelined(
+                (RedisCallback<Object>) connection -> {
+                    StringRedisConnection stringRedisConn = (StringRedisConnection)connection;
+//                    for(int i = 0; i < batchSize; i++) {
+                        stringRedisConn.sAdd(valueKey, data.toArray(new String[] {}));
+//                    }
+                    return null;
+                }
+        );
 
         log.debug("Size of set data by lanes: {}", this.redisTemplate.boundSetOps(laneKey).size());
         log.debug("Size of set data by fields: {}", this.redisTemplate.boundSetOps(valueKey).size());
@@ -242,5 +257,49 @@ public class BaseFieldValueServiceImpl implements BaseFieldValueService {
         }
 
         return result;
+    }
+
+    @Override
+    @Loggable
+    public List<String> getDocumentValues(Long id) {
+        TableValue tableValue = this.tableValueRepository.findByTableId(id);
+        return tableValue == null ? Collections.emptyList() : tableValue.getLanes();
+    }
+
+    @Override
+    @Loggable
+    @Transactional
+    public void storeDocumentData(List<String> data) {
+        TableValue tableValue = new TableValue();
+        tableValue.setTableId(1L);
+        tableValue.setLanes(data);
+
+        this.tableValueRepository.save(tableValue);
+    }
+
+    @Override
+    @Loggable
+    @Transactional
+    public void removeDocumentData() {
+        this.tableValueRepository.deleteAll();
+    }
+
+    @Override
+    @Loggable
+    @Transactional
+    public void removeKeyValueData() {
+        final long TABLE_ID = 2L;
+        String valueKey = "table:" + TABLE_ID + ":fields";
+
+        this.redisTemplate.delete(valueKey);
+    }
+
+    @Override
+    @Loggable
+    public List<String> getKeyValues(Long id) {
+        final long TABLE_ID = 2L;
+        String valueKey = "table:" + TABLE_ID + ":fields";
+
+        return new ArrayList<>(this.redisTemplate.boundSetOps(valueKey).members());
     }
 }
