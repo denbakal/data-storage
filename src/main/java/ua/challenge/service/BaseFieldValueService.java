@@ -1,5 +1,7 @@
 package ua.challenge.service;
 
+import ua.challenge.type.ColumnInsertType;
+
 import java.util.List;
 import java.util.Map;
 
@@ -8,7 +10,11 @@ public interface BaseFieldValueService {
 
     void storeJsonData(List<String> values);
 
-    void storeColumnData(List<Map<String, String>> data);
+    void storeColumnData(List<Map<String, String>> data, ColumnInsertType type);
+
+    void storeKeyValueData(List<String> data);
+
+    void removeColumnData();
 
     List<String> getValues(Long id);
 
@@ -19,4 +25,14 @@ public interface BaseFieldValueService {
     void removeCellData(Long id);
 
     List<String> getCellValues(Long id);
+
+    List<String> getDocumentValues(Long id);
+
+    void storeDocumentData(List<String> data);
+
+    void removeDocumentData();
+
+    void removeKeyValueData();
+
+    List<String> getKeyValues(Long id);
 }

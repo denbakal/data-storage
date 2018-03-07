@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ua.challenge.service.BaseFieldValueService;
+import ua.challenge.type.ColumnInsertType;
 import ua.challenge.type.StoreType;
 
 import java.util.List;
@@ -30,7 +31,18 @@ public class BaseFieldValueController {
     }
 
     @PostMapping(value = "/field-values/column-data-store")
-    public void storeColumnData(@RequestBody List<Map<String, String>> data) {
-        this.baseFieldValueService.storeColumnData(data);
+    public void storeColumnData(@RequestBody List<Map<String, String>> data,
+                                @RequestParam(required = false) ColumnInsertType type) {
+        this.baseFieldValueService.storeColumnData(data, type == null ? ColumnInsertType.INSERT : type);
+    }
+
+    @PostMapping(value = "/field-values/key-value-data-store")
+    public void storeKeyValueData(@RequestBody List<String> data) {
+        this.baseFieldValueService.storeKeyValueData(data);
+    }
+
+    @PostMapping(value = "/field-values/document-data-store")
+    public void storeDocumentData(@RequestBody List<String> data) {
+        this.baseFieldValueService.storeDocumentData(data);
     }
 }

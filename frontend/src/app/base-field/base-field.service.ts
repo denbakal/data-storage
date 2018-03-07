@@ -38,4 +38,20 @@ export class BaseFieldService {
     return this.http.delete(`/base-tables/${baseTableId}/field-values?type=${type}`, {observe: 'response', responseType: 'text'})
         .map(response => response.status as number);
   }
+
+  public storeCassandraData(data: any[], type: string): Observable<number> {
+    return this.http.post(`/field-values/column-data-store?type=${type}`, data, {observe: 'response', responseType: 'text'})
+        .map(response => response.status as number);
+  }
+
+  public storeRedisData(data: any[]): Observable<number> {
+    return this.http.post(`/field-values/key-value-data-store`, data, {observe: 'response', responseType: 'text'})
+      .map(response => response.status as number);
+  }
+
+  public storeMongoData(data: any[]): Observable<number> {
+    return this.http.post(`/field-values/document-data-store`, data, {observe: 'response', responseType: 'text'})
+      .map(response => response.status as number);
+  }
+
 }
