@@ -1,0 +1,55 @@
+<div class="container" >
+
+  <div class="row">
+    <div class="col-md-2">
+      <input [(ngModel)]="name" type="text" class="form-control"
+             name="name"  placeholder="Name..." autocomplete="off">
+    </div>
+    <div class="col-md-2">
+      <input [(ngModel)]="country" type="text" class="form-control"
+             name="country"  placeholder="Country..." autocomplete="off">
+    </div>
+    <div class="col-md-2">
+      <input [(ngModel)]="city" type="text" class="form-control"
+             name="city" placeholder="City..." autocomplete="off">
+    </div>
+    <div class="col-md-2">
+      <button (click)="advancedSearch()" type="submit" class="btn btn-primary">Search</button>
+    </div>
+
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <p class="text-info" ng-if="!$ctrl.error">
+        Found <span class="label label-primary">{{total}}</span> hits in
+      </p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <table class="table" >
+        <thead>
+        <tr>
+          <th>Name</th>
+          <th>Gender</th>
+          <th>Date Of Birth</th>
+          <th>Country</th>
+          <th>City</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let person of persons" >
+          <td>{{person.name}}</td>
+          <td>{{person.gender}}</td>
+          <td>{{person.dateOfBirth}}</td>
+          <td>{{person.address.country}}</td>
+          <td>{{person.address.city}}</td>
+        </tr>
+
+        <tbody>
+      </table>
+    </div>
+
+  </div>

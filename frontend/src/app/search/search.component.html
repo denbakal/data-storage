@@ -1,0 +1,53 @@
+<div class="container" >
+
+  <div class="row">
+    <div class="col-md-6">
+      <input [(ngModel)]="query" type="text" class="form-control" placeholder="Type something..." autocomplete="off">
+    </div>
+    <div class="col-md-2">
+      <button (click)="search()" type="submit" class="btn btn-primary">Search</button>
+    </div>
+
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <p class="text-info" ng-if="!$ctrl.error">
+        Found <span class="label label-primary">{{total}}</span> hits in
+        <!--<span class="label label-primary">{{$ctrl.result.took}} ms</span>-->
+        <!--<span class="label label-success" ng-if="$ctrl.f_country.length>0" ng-click="$ctrl.f_country='';$ctrl.search(1);">{{$ctrl.f_country}}</span>-->
+        <!--<span class="label label-success" ng-if="$ctrl.f_date.length>0" ng-click="$ctrl.f_date='';$ctrl.search(1);">{{$ctrl.f_date}}</span>-->
+      </p>
+      <!--<p class="text-info" ng-if="$ctrl.error">-->
+        <!--<span class="label label-danger">{{$ctrl.error}}</span>-->
+      <!--</p>-->
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <table class="table" >
+        <thead>
+        <tr>
+          <th>Name</th>
+          <th>Gender</th>
+          <th>Date Of Birth</th>
+          <th>Country</th>
+          <th>City</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let person of persons" >
+          <!--<td><a href="#!/person/{{entry._id}}">{{entry._source.name}}</a></td>-->
+          <td>{{person.name}}</td>
+          <td>{{person.gender}}</td>
+          <td>{{person.dateOfBirth}}</td>
+          <td>{{person.address.country}}</td>
+          <td>{{person.address.city}}</td>
+        </tr>
+
+        <tbody>
+      </table>
+    </div>
+
+</div>
