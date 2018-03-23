@@ -13,16 +13,31 @@ export class JsonValueComponent implements OnInit {
 
   count: number;
   data: object[] = [];
-  columns: object[] = [];
+  // columns: object[] = [];
   settings: object = {
     afterLoadData: (firstLoad) => {
       if(!firstLoad) {
         this.isLoading = false;
       }
     },
+    colHeaders: true,
+    columns: [
+      {data: 'fields.FROM', type: 'text', title: 'FROM'},
+      {data: 'fields.TO', type: 'text', title: 'TO'},
+      {data: 'fields.SERVICE', type: 'text', title: 'SERVICE'},
+
+      {data: 'prices.81.FIRST', type: 'text', title: 'P1.FIRST'},
+      {data: 'prices.81.SECOND', type: 'text', title: 'P1.SECOND'},
+      {data: 'prices.81.THIRD', type: 'text', title: 'P1.THIRD'},
+      {data: 'prices.174.FIRST', type: 'text', title: 'P2.FIRST'},
+      {data: 'prices.174.SECOND', type: 'text', title: 'P2.SECOND'},
+      {data: 'prices.174.THIRD', type: 'text', title: 'P2.THIRD'}
+    ],
+    rowHeaders: true
   };
   isLoading: boolean = false;
   isSaving: boolean = false;
+  prices: number[] = [81, 174];
 
   constructor(private baseFieldService: BaseFieldService) {}
 
@@ -31,23 +46,30 @@ export class JsonValueComponent implements OnInit {
   }
 
   initData() {
-    this.baseFieldService
+    /*this.baseFieldService
       .getFieldsByBaseTableId(JsonValueComponent.BASE_TABLE_ID)
       .subscribe((fields) => {
         console.log('Count of getting fields: ' + fields.length);
         this.columns = [];
 
         if (fields.length === 0) {
-          this.data = [];
-          this.count = null;
+          // this.data = [];
+          // this.count = null;
+          for (var i = 0; i < 10; i++) {
+            this.columns.push({data: `fields.f${i}`, title: `F${i}`});
+          }
         } else {
           fields.forEach(f => {
             this.columns.push({data: f.name.toLowerCase(), title: f.name});
           })
         }
-      });
+      });*/
 
-    this.baseFieldService
+    /*for (let i = 0; i < 5; i++) {
+      this.columns.push({data: `fields.f${i}`, title: `F${i}`});
+    }*/
+
+    /*this.baseFieldService
       .getFieldValuesByBaseTableId(JsonValueComponent.BASE_TABLE_ID, 'JSON')
       .subscribe((data) => {
         console.log('Count of getting data: ' + data.length);
@@ -62,14 +84,15 @@ export class JsonValueComponent implements OnInit {
             this.data.push(JSON.parse(element));
           });
         }
-      });
+      });*/
   }
 
   loadData() {
     this.isLoading = true;
     this.data = [];
     for (let i = 0; i < JsonValueComponent.DEFAULT_LANE_COUNT; i++) {
-      this.data.push({"0":"345","1":"asdaf","2":"sdferverve","3":"er33f3","4":"adwf343","5":"adwf343","6":"adwf343","7":"adwf343","8":"adwf343","9":"adwf343","10":"adwf343","11":"adwf343","12":"adwf343","13":"adwf343","14":"adwf343","15":"adwf343","16":"adwf343","17":"adwf343","18":"adwf343","19":"adwf343"});
+      this.data.push({"fields": {"FROM":"345","TO":"asdaf","SERVICE":"sdferverve" + i},
+        "prices": {"81": {"FIRST":"1", "SECOND":"2", "THIRD":"3"}, "174": {"FIRST":"4", "SECOND":"5", "THIRD":"6"}}});
     }
     this.isLoading = false;
   }

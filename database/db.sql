@@ -80,3 +80,75 @@ CREATE OR REPLACE FUNCTION store_lane_values (in lanes text[]) RETURNS void AS
     END;
     '
 LANGUAGE 'plpgsql';
+
+CREATE TABLE table_data_lane  (
+	id          	bigserial NOT NULL,
+	table_data_id		int8 NOT NULL,
+	ordinal     	int4 NOT NULL,
+	lane_hash text NULL,
+	PRIMARY KEY(id)
+);
+CREATE SEQUENCE table_data_lane_id_seq INCREMENT BY 1 START WITH 1;
+ALTER TABLE ONLY table_data_lane ALTER COLUMN id SET DEFAULT nextval('table_data_lane_id_seq'::regclass);
+
+CREATE TABLE table_data_lane_field  (
+	id          	bigserial NOT NULL,
+	lane_id		int8 NOT NULL,
+	table_data_id		int8 NOT NULL,
+	values jsonb NOT NULL,
+	PRIMARY KEY(id)
+);
+CREATE SEQUENCE table_data_lane_field_id_seq INCREMENT BY 1 START WITH 1;
+ALTER TABLE ONLY table_data_lane_field ALTER COLUMN id SET DEFAULT nextval('table_data_lane_field_id_seq'::regclass);
+
+DROP TABLE table_data_lane_price;
+CREATE TABLE table_data_lane_price  (
+	id          	bigserial NOT NULL,
+	lane_id		    int8 NOT NULL,
+	table_data_id		int8 NOT NULL,
+	price_id		int8 NOT NULL,
+	values jsonb NULL,
+	PRIMARY KEY(id)
+);
+CREATE SEQUENCE table_data_lane_price_id_seq INCREMENT BY 1 START WITH 1;
+ALTER TABLE ONLY table_data_lane_price ALTER COLUMN id SET DEFAULT nextval('table_data_lane_price_id_seq'::regclass);
+
+CREATE OR REPLACE FUNCTION store_values (in lanes text[], IN table_data_id bigint, IN prices bigint[]) RETURNS void AS
+$BODY$
+    DECLARE
+     i bigint;
+		 j bigint;
+		 price text;
+		 current_price_value text;
+		 price_search_param text[];
+    BEGIN
+      i=1;
+	    WHILE i <= array_length(lanes, 1)
+		  LOOP
+			  INSERT INTO table_data_lane(id, table_data_id, ordinal, lane_hash) VALUES (nextval('table_data_lane_id_seq'), i, table_data_id, encode(digest(table_data_id || lanes[i], 'sha1'), 'hex'));
+        INSERT INTO table_data_lane_field(id, lane_id, table_data_id, values) VALUES (nextval('table_data_lane_field_id_seq'), currval('table_data_lane_id_seq'), table_data_id, lanes[i]::jsonb->'fields');
+
+			  j=1;
+			  price = lanes[i]::jsonb->'prices';
+
+			  IF (coalesce(price, '') != '') THEN
+			    price_search_param[0] = 'prices';
+
+			    WHILE j <= array_length(prices, 1)
+			      LOOP
+			        price_search_param[1] = prices[j];
+			        current_price_value = lanes[i]::jsonb#>price_search_param;
+
+              IF (coalesce(current_price_value, '') != '') THEN
+                  INSERT INTO table_data_lane_price(id, lane_id, table_data_id, price_id, values)
+                  VALUES (nextval('table_data_lane_price_id_seq'), currval('table_data_lane_id_seq'), table_data_id, prices[j], current_price_value::jsonb);
+              END IF;
+              j= j+1;
+            END LOOP;
+			  END IF;
+		    i= i+1;
+	    END LOOP;
+    END;
+$BODY$
+LANGUAGE 'plpgsql';
+DROP FUNCTION store_values(text[], bigint, bigint[]);

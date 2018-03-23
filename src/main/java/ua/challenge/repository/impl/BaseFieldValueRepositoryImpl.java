@@ -4,6 +4,7 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import ua.challenge.aspect.Loggable;
 import ua.challenge.entity.BaseFieldValue;
 import ua.challenge.entity.QBaseFieldValue;
 import ua.challenge.repository.BaseFieldValueRepository;
@@ -16,13 +17,17 @@ import java.util.List;
 public class BaseFieldValueRepositoryImpl extends BaseRepositoryImpl<BaseFieldValue, Long> implements BaseFieldValueRepository {
     @Override
     @Transactional
+    @Loggable
     public void saveValues(List<String> values) {
         Session session = entityManager.unwrap(Session.class);
         session.doWork(connection -> {
-            Array inArray = connection.createArrayOf("text", values.toArray());
+            Array lanes = connection.createArrayOf("text", values.toArray());
+            Array ids = connection.createArrayOf("bigint", new Integer[]{81, 174});
 
-            try (CallableStatement function = connection.prepareCall("{ call store_lane_values(?) }")) {
-                function.setArray(1, inArray);
+            try (CallableStatement function = connection.prepareCall("{ call store_values(?, ?, ?)}")) {
+                function.setArray(1, lanes);
+                function.setInt(2, 33);
+                function.setArray(3, ids);
                 function.execute();
             }
         });
