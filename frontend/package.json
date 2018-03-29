@@ -24,6 +24,7 @@
     "@angular/router": "^5.2.0",
     "angular-handsontable": "^1.0.0-beta3",
     "core-js": "^2.4.1",
+    "kuker-emitters": "^6.7.4",
     "rxjs": "^5.5.6",
     "zone.js": "^0.8.19"
   },

@@ -3,10 +3,13 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
+import { AngularEmitter } from 'kuker-emitters';
 
 if (environment.production) {
   enableProdMode();
 }
+
+AngularEmitter();
 
 platformBrowserDynamic().bootstrapModule(AppModule)
   .catch(err => console.log(err));
