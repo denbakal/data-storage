@@ -6,8 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.challenge.dto.PersonDto;
+import ua.challenge.entity.elasticsearch.PersonIndex;
+import ua.challenge.mapper.PersonIndexMapper;
 import ua.challenge.mapper.PersonMapper;
 import ua.challenge.repository.PersonRepository;
+import ua.challenge.repository.elasticsearch.PersonIndexRepository;
 import ua.challenge.service.PersonService;
 import ua.challenge.util.PersonGenerator;
 
@@ -24,6 +27,12 @@ public class PersonServiceImpl implements PersonService {
 
     @Autowired
     private PersonMapper personMapper;
+
+    @Autowired
+    private PersonIndexRepository indexRepository;
+
+    @Autowired
+    private PersonIndexMapper personIndexMapper;
 
     private AtomicInteger currentItem = new AtomicInteger();
 
@@ -45,7 +54,8 @@ public class PersonServiceImpl implements PersonService {
         joe.setName("Joe Smith");
         joe.getAddress().setCountry("France");
         joe.getAddress().setCity("Paris");
-        this.personRepository.save(this.personMapper.toPerson(joe));
+        PersonDto persistJoe = this.personMapper.fromPerson(this.personRepository.save(this.personMapper.toPerson(joe)));
+        this.indexRepository.save(this.personIndexMapper.toPersonIndex(persistJoe));
         currentItem.incrementAndGet();
 
         PersonDto franceGall = PersonGenerator.personGenerator();
@@ -53,12 +63,14 @@ public class PersonServiceImpl implements PersonService {
         franceGall.setGender("female");
         franceGall.getAddress().setCountry("Italy");
         franceGall.getAddress().setCity("Ischia");
-        this.personRepository.save(this.personMapper.toPerson(franceGall));
+        PersonDto persistFranceGall = this.personMapper.fromPerson(this.personRepository.save(this.personMapper.toPerson(franceGall)));
+        this.indexRepository.save(this.personIndexMapper.toPersonIndex(persistFranceGall));
         currentItem.incrementAndGet();
 
         for (int i = 2; i < size; i++) {
             PersonDto person = PersonGenerator.personGenerator();
-            this.personRepository.save(this.personMapper.toPerson(person));
+            PersonDto persistPerson = this.personMapper.fromPerson(this.personRepository.save(this.personMapper.toPerson(person)));
+            this.indexRepository.save(this.personIndexMapper.toPersonIndex(persistPerson));
             currentItem.incrementAndGet();
         }
 
