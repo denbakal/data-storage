@@ -5,6 +5,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ua.challenge.aspect.Loggable;
 import ua.challenge.dto.PersonDto;
 import ua.challenge.entity.elasticsearch.PersonIndex;
 import ua.challenge.mapper.PersonIndexMapper;
@@ -15,6 +16,7 @@ import ua.challenge.service.PersonService;
 import ua.challenge.util.PersonGenerator;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -43,6 +45,7 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     @SneakyThrows
+    @Loggable
     @Transactional
     public void init(long size) {
         long start = 0;
@@ -50,12 +53,15 @@ public class PersonServiceImpl implements PersonService {
 
         log.debug("Initializing database for {} persons", size);
 
+        List<PersonIndex> personIndexList = new ArrayList<>();
+
         PersonDto joe = PersonGenerator.personGenerator();
         joe.setName("Joe Smith");
         joe.getAddress().setCountry("France");
         joe.getAddress().setCity("Paris");
         PersonDto persistJoe = this.personMapper.fromPerson(this.personRepository.save(this.personMapper.toPerson(joe)));
-        this.indexRepository.save(this.personIndexMapper.toPersonIndex(persistJoe));
+//        this.indexRepository.save(this.personIndexMapper.toPersonIndex(persistJoe));
+        personIndexList.add(this.personIndexMapper.toPersonIndex(persistJoe));
         currentItem.incrementAndGet();
 
         PersonDto franceGall = PersonGenerator.personGenerator();
@@ -64,15 +70,20 @@ public class PersonServiceImpl implements PersonService {
         franceGall.getAddress().setCountry("Italy");
         franceGall.getAddress().setCity("Ischia");
         PersonDto persistFranceGall = this.personMapper.fromPerson(this.personRepository.save(this.personMapper.toPerson(franceGall)));
-        this.indexRepository.save(this.personIndexMapper.toPersonIndex(persistFranceGall));
+//        this.indexRepository.save(this.personIndexMapper.toPersonIndex(persistFranceGall));
+        personIndexList.add(this.personIndexMapper.toPersonIndex(persistFranceGall));
         currentItem.incrementAndGet();
 
         for (int i = 2; i < size; i++) {
             PersonDto person = PersonGenerator.personGenerator();
             PersonDto persistPerson = this.personMapper.fromPerson(this.personRepository.save(this.personMapper.toPerson(person)));
-            this.indexRepository.save(this.personIndexMapper.toPersonIndex(persistPerson));
+//            this.indexRepository.save(this.personIndexMapper.toPersonIndex(persistPerson));
+            personIndexList.add(this.personIndexMapper.toPersonIndex(persistPerson));
             currentItem.incrementAndGet();
         }
+
+        //bulk index
+        this.indexRepository.save(personIndexList);
 
         long took = System.currentTimeMillis() - start;
 
