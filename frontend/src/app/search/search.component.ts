@@ -8,7 +8,7 @@ import {Person} from "../person/person.model";
 })
 
 export class SearchComponent implements OnInit {
-  query: string;
+  query: string = "";
   persons: Person[];
   total: number = 0;
 

@@ -8,9 +8,9 @@ import {PersonService} from "../person/person.service";
 })
 
 export class AdvancedComponent implements OnInit {
-  name: string;
-  country: string;
-  city: string;
+  name: string = "";
+  country: string = "";
+  city: string = "";
   persons: Person[];
   total: number = 0;
 

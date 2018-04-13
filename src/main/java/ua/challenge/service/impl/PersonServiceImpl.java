@@ -129,6 +129,8 @@ public class PersonServiceImpl implements PersonService {
                 .withQuery(queryBuilder)
                 .build();
 
+        log.debug("Search query: {}", query.getQuery().toString());
+
         return this.personIndexMapper.fromPersonIndexList(this.elasticsearchTemplate.queryForList(query, PersonIndex.class));
     }
 
@@ -166,6 +168,8 @@ public class PersonServiceImpl implements PersonService {
         SearchQuery query = new NativeSearchQueryBuilder()
                 .withQuery(queryBuilder)
                 .build();
+
+        log.debug("Advanced Search query: {}", query.getQuery().toString());
 
 //        return this.personMapper.fromPersonList(this.personRepository.search(name, country, city));
         return this.personIndexMapper.fromPersonIndexList(this.elasticsearchTemplate.queryForList(query, PersonIndex.class));

@@ -1,6 +1,7 @@
 # data-storage
 
 docker run -d --name=data-elasticsearch -p 9200:9200 -p 9300:9300 -e ES_JAVA_OPTS="-Xms512m -Xmx512m" elasticsearch:2.4.6 -Des.node.name="TestNode"
+docker run -d -v /tmp/elasticsearch/config:/usr/share/elasticsearch/config --name=data-elasticsearch -p 9200:9200 -p 9300:9300 -e ES_JAVA_OPTS="-Xms512m -Xmx512m" elasticsearch:2.4.6 -Des.node.name="TestNode"
 docker exec -it data-elasticsearch bash
 
 docker network create data-network --driver=bridge

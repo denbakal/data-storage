@@ -32,6 +32,6 @@ public class PersonIndex {
     @Field(type = FieldType.Nested)
     private Marketing marketing;
 
-    @Field(type = FieldType.Nested)
+    @Field(type = FieldType.Object)
     private Address address;
 }
