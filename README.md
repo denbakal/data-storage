@@ -3,6 +3,12 @@
 docker run -d --name=data-elasticsearch -p 9200:9200 -p 9300:9300 -e ES_JAVA_OPTS="-Xms512m -Xmx512m" elasticsearch:2.4.6 -Des.node.name="TestNode"
 docker exec -it data-elasticsearch bash
 
+docker network create data-network --driver=bridge
+docker run -d --name=data-elasticsearch --network data-network -p 9200:9200 -p 9300:9300 -e ES_JAVA_OPTS="-Xms512m -Xmx512m" elasticsearch:2.4.6 -Des.node.name="TestNode"
+
+docker run -d --name data-kibana --network data-network -e ELASTICSEARCH_URL=http://data-elasticsearch:9200 -p 5601:5601 kibana:4.6
+docker run -d -e ELASTICSEARCH_URL=http://elasticsearch_2_4:9200 -p 5601:5601 -d kibana:4.6
+
 localhost:9200/_cluster/health
 
 1) Create a new index:

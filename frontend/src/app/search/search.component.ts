@@ -25,4 +25,15 @@ export class SearchComponent implements OnInit {
         }
       );
   }
+
+  search() {
+    this.persons = [];
+
+    this.personService.search(this.query)
+      .subscribe((result) => {
+          this.persons = result;
+          this.total = result.length;
+        }
+      );
+  }
 }

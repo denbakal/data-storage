@@ -15,5 +15,5 @@ public interface PersonMapper {
     PersonDto fromPerson(Person person);
 
     @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_NULL)
-    List<PersonDto> fromPersonList(List<Person> baseLaneList);
+    List<PersonDto> fromPersonList(List<Person> personList);
 }

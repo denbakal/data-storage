@@ -22,7 +22,12 @@ export class PersonService {
   }
 
   advancedSearch(name: string, country: string, city: string): Observable<Person[]> {
-    return this.http.get(`/persons/search?name=${name}&country=${country}&city=${city}`)
+    return this.http.get(`/persons/advanced-search?name=${name}&country=${country}&city=${city}`)
+      .map(response => response as Person[]);
+  }
+
+  search(query: string): Observable<Person[]> {
+    return this.http.get(`/persons/search?query=${query}`)
       .map(response => response as Person[]);
   }
 }

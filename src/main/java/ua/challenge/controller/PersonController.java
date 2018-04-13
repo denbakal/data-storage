@@ -25,9 +25,14 @@ public class PersonController {
         return this.personService.getPersons();
     }
 
-    @GetMapping(path = "/persons/search")
+    @GetMapping(path = "/persons/advanced-search")
     public List<PersonDto> search(@RequestParam String name, @RequestParam String country, @RequestParam String city) {
         log.debug("Search by next params: {}, {}, {}", name, country, city);
-        return this.personService.search(name, country, city);
+        return this.personService.advancedSearch(name, country, city);
+    }
+
+    @GetMapping("/persons/search")
+    public List<PersonDto> search(@RequestParam String query) {
+        return this.personService.search(query);
     }
 }

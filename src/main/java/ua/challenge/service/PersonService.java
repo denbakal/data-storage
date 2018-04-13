@@ -11,5 +11,7 @@ public interface PersonService {
 
     List<PersonDto> getPersons();
 
-    List<PersonDto> search(String name, String country, String city);
+    List<PersonDto> search(String searchText);
+
+    List<PersonDto> advancedSearch(String name, String country, String city);
 }
