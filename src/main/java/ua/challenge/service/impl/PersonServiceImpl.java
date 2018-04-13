@@ -3,10 +3,7 @@ package ua.challenge.service.impl;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.elasticsearch.common.Strings;
-import org.elasticsearch.index.query.MatchQueryBuilder;
-import org.elasticsearch.index.query.MultiMatchQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
@@ -136,7 +133,41 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
+    @Loggable
     public List<PersonDto> advancedSearch(String name, String country, String city) {
-        return this.personMapper.fromPersonList(this.personRepository.search(name, country, city));
+        QueryBuilder queryBuilder;
+
+        if (Strings.isEmpty(name) && Strings.isEmpty(country) && Strings.isEmpty(city)) {
+            queryBuilder = QueryBuilders.matchAllQuery();
+        } else {
+            BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+
+            if (Strings.hasText(name)) {
+                boolQueryBuilder.must(
+                        QueryBuilders.matchQuery("name", name)
+                );
+            }
+
+            if (Strings.hasText(country)) {
+                boolQueryBuilder.must(
+                        QueryBuilders.matchQuery("address.country", country)
+                );
+            }
+
+            if (Strings.hasText(city)) {
+                boolQueryBuilder.must(
+                        QueryBuilders.matchQuery("address.city", city)
+                );
+            }
+
+            queryBuilder = boolQueryBuilder;
+        }
+
+        SearchQuery query = new NativeSearchQueryBuilder()
+                .withQuery(queryBuilder)
+                .build();
+
+//        return this.personMapper.fromPersonList(this.personRepository.search(name, country, city));
+        return this.personIndexMapper.fromPersonIndexList(this.elasticsearchTemplate.queryForList(query, PersonIndex.class));
     }
 }
