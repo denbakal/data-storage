@@ -3,6 +3,7 @@ package ua.challenge.service.impl;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.elasticsearch.common.Strings;
+import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
@@ -122,7 +123,11 @@ public class PersonServiceImpl implements PersonService {
                     .field("gender")
                     .field("address.country")
                     .field("address.city")
-                    .type(MultiMatchQueryBuilder.Type.BEST_FIELDS);
+                    .type(MultiMatchQueryBuilder.Type.BEST_FIELDS)
+                .operator(MatchQueryBuilder.Operator.AND)
+                    .fuzziness(Fuzziness.ONE)
+                    .prefixLength(3)
+            ;
         }
 
         SearchQuery query = new NativeSearchQueryBuilder()
