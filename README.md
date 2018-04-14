@@ -19,3 +19,17 @@ INSERT INTO catalog_good (id, categoryId, name, description, price, oldPrice) VA
 INSERT INTO catalog_good (id, categoryId, name, description, price, oldPrice) VALUES (3, 2, 'Холодильник Barbaz', 'Люкс на вашей кухне!', 500000, 300000);
 INSERT INTO catalog_good (id, categoryId, name, description, price, oldPrice) VALUES (4, 3, 'Машинка Habr', 'Стирает, отжимает, сушит!', 10000, NULL);
 
+SQL:
+SELECT cg.name goodName, cg.price goodPrice, cc.name category, pcc.name parentCategory
+FROM catalog_category.CatalogCategory cc
+  JOIN catalog_category.CatalogCategory pcc
+  ON cc.parentId = pcc.id
+  JOIN catalog_good.CatalogGood cg
+  ON cg.categoryId = cc.id;
+  
+SELECT cc.name, AVG(cg.price) avgPrice
+FROM catalog_category.CatalogCategory cc
+  JOIN catalog_good.CatalogGood cg
+  ON cg.categoryId = cc.id
+WHERE cg.price <= 100000
+GROUP BY cc.id;  
