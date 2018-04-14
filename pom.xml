@@ -311,7 +311,7 @@
                     <workingDirectory>frontend</workingDirectory>
                     <installDirectory>temp</installDirectory>
                 </configuration>
-                <executions>
+                <!--<executions>
                     <execution>
                         <id>install node and yarn</id>
                         <goals>
@@ -350,7 +350,7 @@
                             <arguments>build</arguments>
                         </configuration>
                     </execution>
-                </executions>
+                </executions>-->
             </plugin>
         </plugins>
     </build>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean class="org.apache.ignite.cache.store.cassandra.datasource.DataSource" name="cassandra">
+        <property name="contactPoints" value="127.0.0.1"/>
+    </bean>
+
+    <bean class="org.apache.ignite.configuration.IgniteConfiguration">
+        <property name="cacheConfiguration">
+            <list>
+                <bean class="org.apache.ignite.configuration.CacheConfiguration">
+                    <property name="name" value="CatalogCategory"/>
+                    <property name="readThrough" value="true"/>
+                    <property name="writeThrough" value="true"/>
+                    <property name="sqlSchema" value="catalog_category"/>
+                    <property name="indexedTypes">
+                        <list>
+                            <value type="java.lang.Class">java.lang.Long</value>
+                            <value type="java.lang.Class">ua.challenge.dto.CatalogCategory</value>
+                        </list>
+                    </property>
+                    <property name="cacheStoreFactory">
+                        <bean class="org.apache.ignite.cache.store.cassandra.CassandraCacheStoreFactory">
+                            <property name="dataSource" ref="cassandra"/>
+                            <property name="persistenceSettings">
+                                <bean class="org.apache.ignite.cache.store.cassandra.persistence.KeyValuePersistenceSettings">
+                                    <constructor-arg type="java.lang.String"><value><![CDATA[
+                                        <persistence keyspace="IgniteTest" table="catalog_category">
+                                            <keyPersistence class="java.lang.Long" strategy="PRIMITIVE" column="id"/>
+                                            <valuePersistence class="ua.challenge.dto.CatalogCategory" strategy="POJO"/>
+                                        </persistence>]]></value></constructor-arg>
+                                </bean>
+                            </property>
+                        </bean>
+                    </property>
+                </bean>
+
+                <bean class="org.apache.ignite.configuration.CacheConfiguration">
+                    <property name="name" value="CatalogGood"/>
+                    <property name="readThrough" value="true"/>
+                    <property name="writeThrough" value="true"/>
+                    <property name="sqlSchema" value="catalog_good"/>
+                    <property name="indexedTypes">
+                        <list>
+                            <value type="java.lang.Class">java.lang.Long</value>
+                            <value type="java.lang.Class">ua.challenge.dto.CatalogGood</value>
+                        </list>
+                    </property>
+                    <property name="cacheStoreFactory">
+                        <bean class="org.apache.ignite.cache.store.cassandra.CassandraCacheStoreFactory">
+                            <property name="dataSource" ref="cassandra"/>
+                            <property name="persistenceSettings">
+                                <bean class="org.apache.ignite.cache.store.cassandra.persistence.KeyValuePersistenceSettings">
+                                    <constructor-arg type="java.lang.String"><value><![CDATA[
+                                        <persistence keyspace="IgniteTest" table="catalog_good">
+                                            <keyPersistence class="java.lang.Long" strategy="PRIMITIVE" column="id"/>
+                                            <valuePersistence class="ua.challenge.dto.CatalogGood" strategy="POJO"/>
+                                        </persistence>]]></value></constructor-arg>
+                                </bean>
+                            </property>
+                        </bean>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+</beans>
