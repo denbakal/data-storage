@@ -97,3 +97,42 @@ PUT twitter
     }
   }
 }
+
+) Create analyzer
+PUT /person_index/_settings
+{
+    "analysis": {
+        "analyzer": {
+            "ngram": {
+                "char_filter": ["html_strip"],
+                "filter": [
+                    "lowercase", "ngram_stopwords"
+                ],
+                "tokenizer": "ngram_tokenizer"
+            }
+        },
+        "tokenizer": {
+            "ngram_tokenizer": {
+                "max_gram": "10",
+                "min_gram": "1",
+                "token_chars": [
+                    "letter",
+                    "digit"
+                ],
+                "type": "edgeNGram"
+            }
+        },
+        "filter": {
+            "ngram_stopwords": {
+                "type": "stop",
+                "stopwords": ["the", "a"]
+            }
+        }
+    }
+}
+
+) Close the index
+POST /person_index/_close
+
+) Open the index
+POST /person_index/_open
