@@ -5,6 +5,7 @@ import lombok.extern.log4j.Log4j2;
 import org.elasticsearch.common.Strings;
 import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.*;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
@@ -120,9 +121,9 @@ public class PersonServiceImpl implements PersonService {
         } else {
             queryBuilder = QueryBuilders.multiMatchQuery(searchText)
                     .field("name.autocomplete")
-                    .field("gender")
-                    .field("address.country")
-                    .field("address.city")
+                    .field("gender.autocomplete")
+                    .field("address.country.autocomplete")
+                    .field("address.city.autocomplete")
                     .type(MultiMatchQueryBuilder.Type.BEST_FIELDS)
 //                .operator(MatchQueryBuilder.Operator.AND)
 //                    .fuzziness(Fuzziness.ONE)
@@ -151,19 +152,19 @@ public class PersonServiceImpl implements PersonService {
 
             if (Strings.hasText(name)) {
                 boolQueryBuilder.must(
-                        QueryBuilders.matchQuery("name", name)
+                        QueryBuilders.matchQuery("name.autocomplete", name)
                 );
             }
 
             if (Strings.hasText(country)) {
                 boolQueryBuilder.must(
-                        QueryBuilders.matchQuery("address.country", country)
+                        QueryBuilders.matchQuery("address.country.autocomplete", country)
                 );
             }
 
             if (Strings.hasText(city)) {
                 boolQueryBuilder.must(
-                        QueryBuilders.matchQuery("address.city", city)
+                        QueryBuilders.matchQuery("address.city.autocomplete", city)
                 );
             }
 
