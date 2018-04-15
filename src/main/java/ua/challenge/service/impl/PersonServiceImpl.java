@@ -2,12 +2,19 @@ package ua.challenge.service.impl;
 
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.Strings;
 import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.*;
+import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation;
+import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.ResultsExtractor;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
@@ -27,7 +34,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
@@ -133,9 +143,33 @@ public class PersonServiceImpl implements PersonService {
 
         SearchQuery query = new NativeSearchQueryBuilder()
                 .withQuery(queryBuilder)
+                .addAggregation(
+                        AggregationBuilders.terms("by_country")
+                                .field("address.country")
+//                                .order(Terms.Order.aggregation("_count", false))
+                )
                 .build();
 
         log.debug("Search query: {}", query.getQuery().toString());
+
+        Aggregations aggregations = elasticsearchTemplate.query(query, SearchResponse::getAggregations);
+
+        log.debug("Aggregations: {}", aggregations.asList().size());
+
+        Map<String, Aggregation> results = aggregations.asMap();
+        StringTerms countries = (StringTerms) results.get("by_country");
+
+        List<String> keys = countries.getBuckets().stream()
+                .map(MultiBucketsAggregation.Bucket::getKeyAsString)
+                .collect(Collectors.toList());
+
+        log.debug("keys: {}", keys);
+
+        List<Long> counts = countries.getBuckets().stream()
+                .map(MultiBucketsAggregation.Bucket::getDocCount)
+                .collect(Collectors.toList());
+
+        log.debug("counts: {}", counts);
 
         return this.personIndexMapper.fromPersonIndexList(this.elasticsearchTemplate.queryForList(query, PersonIndex.class));
     }
