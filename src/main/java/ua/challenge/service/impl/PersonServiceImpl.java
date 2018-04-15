@@ -119,14 +119,14 @@ public class PersonServiceImpl implements PersonService {
             queryBuilder = QueryBuilders.matchAllQuery();
         } else {
             queryBuilder = QueryBuilders.multiMatchQuery(searchText)
-                    .field("name")
+                    .field("name.autocomplete")
                     .field("gender")
                     .field("address.country")
                     .field("address.city")
                     .type(MultiMatchQueryBuilder.Type.BEST_FIELDS)
-                .operator(MatchQueryBuilder.Operator.AND)
-                    .fuzziness(Fuzziness.ONE)
-                    .prefixLength(3)
+//                .operator(MatchQueryBuilder.Operator.AND)
+//                    .fuzziness(Fuzziness.ONE)
+//                    .prefixLength(3)
             ;
         }
 

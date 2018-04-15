@@ -1,0 +1,38 @@
+{
+  "index": {
+    "number_of_shards": "5",
+    "number_of_replicas": "1",
+    "refresh_interval": "1s",
+    "store": {
+      "type": "fs"
+    },
+    "analysis": {
+      "analyzer": {
+        "ngram": {
+          "char_filter": ["html_strip"],
+          "filter": [
+            "lowercase", "ngram_stopwords"
+          ],
+          "tokenizer": "ngram_tokenizer"
+        }
+      },
+      "tokenizer": {
+        "ngram_tokenizer": {
+          "max_gram": "10",
+          "min_gram": "1",
+          "token_chars": [
+            "letter",
+            "digit"
+          ],
+          "type": "edgeNGram"
+        }
+      },
+      "filter": {
+        "ngram_stopwords": {
+          "type": "stop",
+          "stopwords": ["the", "a"]
+        }
+      }
+    }
+  }
+}
