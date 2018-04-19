@@ -136,3 +136,47 @@ POST /person_index/_close
 
 ) Open the index
 POST /person_index/_open
+
+) Array datatype
+PUT /my_index/test_doc/1
+{
+  "message": "some arrays in this document...",
+  "tags":  [ "elasticsearch", "wow" ], 
+  "lists": [ 
+    {
+      "name": "prog_list",
+      "description": "programming list"
+    },
+    {
+      "name": "cool_list",
+      "description": "cool stuff list"
+    }
+  ],
+  "codes": [123, 99]
+}
+
+PUT /my_index/test_doc/2
+{
+  "message": "no arrays in this document...",
+  "tags":  "elasticsearch",
+  "lists": {
+    "name": "prog_list",
+    "description": "programming list"
+  }
+}
+
+GET /my_index/test_doc/_search
+{
+  "query": {
+    "filtered": {
+      "filter": {
+        "terms": {
+          "codes": [
+            99
+          ],
+          "execution": "and"
+        }
+      }
+    }
+  }
+}
