@@ -10,6 +10,10 @@ import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation;
+import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramInterval;
+import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
+import org.elasticsearch.search.aggregations.bucket.histogram.InternalDateHistogram;
+import org.elasticsearch.search.aggregations.bucket.histogram.InternalHistogram;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +24,9 @@ import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.challenge.aspect.Loggable;
+import ua.challenge.dto.BucketDto;
 import ua.challenge.dto.PersonDto;
+import ua.challenge.dto.SearchResultDto;
 import ua.challenge.entity.elasticsearch.Book;
 import ua.challenge.entity.elasticsearch.PersonIndex;
 import ua.challenge.mapper.PersonIndexMapper;
@@ -123,7 +129,8 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     @Loggable
-    public List<PersonDto> search(String searchText) {
+    public SearchResultDto search(String searchText) {
+        SearchResultDto result = new SearchResultDto();
         QueryBuilder queryBuilder;
 
         if (Strings.isEmpty(searchText)) {
@@ -148,6 +155,14 @@ public class PersonServiceImpl implements PersonService {
                                 .field("address.country")
 //                                .order(Terms.Order.aggregation("_count", false))
                 )
+                .addAggregation(
+                        AggregationBuilders.dateHistogram("by_year")
+                                .field("dateOfBirth")
+                                .minDocCount(0)
+                                .interval(DateHistogramInterval.days(3652))
+                                .extendedBounds("1940", "2009")
+                                .format("YYYY")
+                )
                 .build();
 
         log.debug("Search query: {}", query.getQuery().toString());
@@ -158,20 +173,23 @@ public class PersonServiceImpl implements PersonService {
 
         Map<String, Aggregation> results = aggregations.asMap();
         StringTerms countries = (StringTerms) results.get("by_country");
+        InternalHistogram years = (InternalHistogram) results.get("by_year");
 
-        List<String> keys = countries.getBuckets().stream()
-                .map(MultiBucketsAggregation.Bucket::getKeyAsString)
+        List<BucketDto> byCountries = countries.getBuckets().stream()
+                .map(bucket -> new BucketDto(bucket.getKeyAsString(), bucket.getDocCount()))
                 .collect(Collectors.toList());
+        result.setCountries(byCountries);
+        log.debug("byCountries: {}", byCountries);
 
-        log.debug("keys: {}", keys);
-
-        List<Long> counts = countries.getBuckets().stream()
-                .map(MultiBucketsAggregation.Bucket::getDocCount)
+        List<? extends Histogram.Bucket> yearBuckets = ((Histogram) years).getBuckets();
+        List<BucketDto> byYears = yearBuckets.stream()
+                .map(bucket -> new BucketDto(bucket.getKeyAsString(), bucket.getDocCount()))
                 .collect(Collectors.toList());
+        result.setYears(byYears);
+        log.debug("byYears: {}", byYears);
 
-        log.debug("counts: {}", counts);
-
-        return this.personIndexMapper.fromPersonIndexList(this.elasticsearchTemplate.queryForList(query, PersonIndex.class));
+        result.setPersons(this.personIndexMapper.fromPersonIndexList(this.elasticsearchTemplate.queryForList(query, PersonIndex.class)));
+        return result;
     }
 
     @Override

@@ -3,6 +3,7 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Observable} from "rxjs/Observable";
 import {Person} from "./person.model";
 import 'rxjs/add/operator/map';
+import {SearchResult} from "../shared/search-result.model";
 
 @Injectable()
 export class PersonService {
@@ -26,8 +27,8 @@ export class PersonService {
       .map(response => response as Person[]);
   }
 
-  search(query: string): Observable<Person[]> {
+  search(query: string): Observable<SearchResult> {
     return this.http.get(`/persons/search?query=${query}`)
-      .map(response => response as Person[]);
+      .map(response => response as SearchResult);
   }
 }

@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ua.challenge.dto.PersonDto;
+import ua.challenge.dto.SearchResultDto;
 import ua.challenge.service.PersonService;
 
 import java.util.List;
@@ -32,7 +33,7 @@ public class PersonController {
     }
 
     @GetMapping("/persons/search")
-    public List<PersonDto> search(@RequestParam String query) {
+    public SearchResultDto search(@RequestParam String query) {
         return this.personService.search(query);
     }
 }
