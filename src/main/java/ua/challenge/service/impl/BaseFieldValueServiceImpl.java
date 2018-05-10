@@ -1,5 +1,8 @@
 package ua.challenge.service.impl;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +10,7 @@ import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.cassandra.core.CassandraTemplate;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.StringRedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
@@ -19,6 +23,7 @@ import ua.challenge.dto.BaseFieldValueDto;
 import ua.challenge.dto.BaseLaneDto;
 import ua.challenge.dto.BaseLaneValueDto;
 import ua.challenge.entity.cassandra.TableData;
+import ua.challenge.entity.elasticsearch.FieldIndex;
 import ua.challenge.entity.mongo.TableValue;
 import ua.challenge.mapper.BaseFieldValueMapper;
 import ua.challenge.mapper.BaseLaneMapper;
@@ -26,11 +31,15 @@ import ua.challenge.mapper.BaseLaneValueMapper;
 import ua.challenge.repository.BaseFieldValueRepository;
 import ua.challenge.repository.BaseLaneRepository;
 import ua.challenge.repository.BaseLaneValueRepository;
+import ua.challenge.repository.elasticsearch.FieldIndexRepository;
 import ua.challenge.repository.mongo.TableValueRepository;
 import ua.challenge.service.BaseFieldService;
 import ua.challenge.service.BaseFieldValueService;
 import ua.challenge.type.ColumnInsertType;
+import ua.challenge.util.DestinationPointGenerator;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -67,6 +76,12 @@ public class BaseFieldValueServiceImpl implements BaseFieldValueService {
     @Autowired
     private TableValueRepository tableValueRepository;
 
+    @Autowired
+    private ElasticsearchTemplate elasticsearchTemplate;
+
+    @Autowired
+    private FieldIndexRepository fieldIndexRepository;
+
     @Override
     @Loggable
     public void storeData(List<String> values) {
@@ -87,7 +102,38 @@ public class BaseFieldValueServiceImpl implements BaseFieldValueService {
     @Loggable
     public void storeJsonData(List<String> values) {
         final long BASE_TABLE_ID = 1L;
-        baseFieldValueRepository.saveValues(values);
+//        baseFieldValueRepository.saveValues(values);
+
+        List<FieldIndex> fieldIndices = new ArrayList<>();
+
+        long recordId = 1L;
+        Date startDate = java.sql.Timestamp.valueOf(LocalDateTime.from(LocalDateTime.now()).minusDays(7));
+        Date endDate = java.sql.Timestamp.valueOf(LocalDateTime.from(LocalDateTime.now()).plusDays(3));
+
+        for (String value : values) {
+            try {
+                JSONObject lane = new JSONObject(value);
+                ObjectMapper mapper = new ObjectMapper();
+                FieldIndex fieldIndex = mapper.readValue(lane.getString("fields"), FieldIndex.class);
+                fieldIndex.setRecordId(recordId);
+                fieldIndex.setClientId(73L);
+                fieldIndex.setFromPoint(DestinationPointGenerator.generate(new Random().nextInt(3)));
+                fieldIndex.setToPoint(DestinationPointGenerator.generate(new Random().nextInt(3)));
+                fieldIndex.setStart(startDate);
+                fieldIndex.setEnd(endDate);
+
+                fieldIndices.add(fieldIndex);
+
+                recordId++;
+            } catch (JSONException | IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        log.debug("Count index of fields: {}", fieldIndices.size());
+
+        // bulk index
+        this.fieldIndexRepository.save(fieldIndices);
     }
 
     @Override

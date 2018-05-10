@@ -35,3 +35,86 @@ db.users.find().skip(3)
 var cursor = db.users.find(); null;
 db.users.count()
 db.users.drop()
+
+localhost:9200/field_index/fields/_search
+{
+  "query": {
+    "bool": {
+      "must": {
+        "term": {
+          "clientId": 73
+        }
+      },
+      "must": {
+        "term": {
+          "fromPoint.point": "fr"
+        }
+      },
+      "must": {
+        "prefix": {
+          "fromPoint.codes": "7"
+        }
+      },
+      "must": {
+        "term": {
+          "toPoint.point": "it"
+        }
+      },
+      "must": {
+        "prefix": {
+          "toPoint.codes": "22"
+        }
+      }
+    }
+  }
+}
+
+==
+
+{
+  "query": {
+    "bool": {
+      "must": {
+        "term": {
+          "clientId": 73
+        }
+      },
+      "must": {
+        "term": {
+          "fromPoint.point": "fr"
+        }
+      },
+      "must": {
+        "prefix": {
+          "fromPoint.codes": "7"
+        }
+      },
+      "must": {
+        "term": {
+          "toPoint.point": "it"
+        }
+      },
+      "must": {
+        "prefix": {
+          "toPoint.codes": "22"
+        }
+      },
+      "must": [
+            {
+              "range": {
+                "start": {
+                  "lte": "2015-08-15T11:28:45.114-07:00"
+                }
+              }
+            },
+            {
+              "range": {
+                "end": {
+                  "gte": "2015-08-11T11:28:45.114-07:00"
+                }
+              }
+            }
+          ]
+    }
+  }
+}
