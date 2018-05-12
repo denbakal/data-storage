@@ -21,12 +21,16 @@ public class FieldIndex {
     @Id
     private String id;
 
-    @Field
+    @Field(type = FieldType.Long)
     private Long clientId;
 
     @Field(type = FieldType.Date, format = DateFormat.date, pattern = "dd.MM.yyyy HH:mm:ss.SSS")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy HH:mm:ss.SSS")
     private Date start;
+
+    @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "dd.MM.yyyy HH:mm:ss.SSS")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy HH:mm:ss.SSS")
+    private Date releaseDate;
 
     @Field(type = FieldType.Date, format = DateFormat.date, pattern = "dd.MM.yyyy HH:mm:ss.SSS")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy HH:mm:ss.SSS")
@@ -38,7 +42,7 @@ public class FieldIndex {
     @Field(type = FieldType.Object)
     private DestinationPoint toPoint;
 
-    @Field
+    @Field(type = FieldType.Long)
     private Long recordId;
 
     @Field(type = FieldType.String)
