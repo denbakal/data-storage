@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.DateFormat;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.*;
 
 import java.util.Date;
 
@@ -17,6 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 @ToString
 @Document(indexName = "field_index", type = "fields")
+@Setting(settingPath = "/elasticsearch/field/settings/settings.json")
 public class FieldIndex {
     @Id
     private String id;
@@ -24,15 +22,11 @@ public class FieldIndex {
     @Field(type = FieldType.Long)
     private Long clientId;
 
-    @Field(type = FieldType.Date, format = DateFormat.date, pattern = "dd.MM.yyyy HH:mm:ss.SSS")
+    @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "dd.MM.yyyy HH:mm:ss.SSS")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy HH:mm:ss.SSS")
     private Date start;
 
     @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "dd.MM.yyyy HH:mm:ss.SSS")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy HH:mm:ss.SSS")
-    private Date releaseDate;
-
-    @Field(type = FieldType.Date, format = DateFormat.date, pattern = "dd.MM.yyyy HH:mm:ss.SSS")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy HH:mm:ss.SSS")
     private Date end;
 

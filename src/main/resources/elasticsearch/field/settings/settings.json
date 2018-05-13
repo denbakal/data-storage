@@ -1,0 +1,26 @@
+{
+  "index": {
+    "number_of_shards": "5",
+    "number_of_replicas": "1",
+    "refresh_interval": "1s",
+    "store": {
+      "type": "fs"
+    }
+  },
+  "mappings": {
+    "_default_": {
+      "date_detection": false,
+      "dynamic_templates": [
+        {
+          "dates": {
+            "match": ".*Date|date",
+            "match_pattern": "regex",
+            "mapping": {
+              "type": "date"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
