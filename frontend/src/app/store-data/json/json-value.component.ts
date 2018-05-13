@@ -9,7 +9,7 @@ import {isNumeric} from "rxjs/util/isNumeric";
 
 export class JsonValueComponent implements OnInit {
   static BASE_TABLE_ID: number = 1;
-  static DEFAULT_LANE_COUNT: number = 15000;
+  static DEFAULT_LANE_COUNT: number = 15;
 
   count: number;
   data: object[] = [];
