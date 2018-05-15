@@ -121,7 +121,6 @@ public class BaseFieldValueServiceImpl implements BaseFieldValueService {
                 fieldIndex.setToPoint(DestinationPointGenerator.generate(new Random().nextInt(3)));
                 fieldIndex.setStart(startDate);
                 fieldIndex.setEnd(endDate);
-                fieldIndex.setReleaseDate(new Date());
 
                 fieldIndices.add(fieldIndex);
 
