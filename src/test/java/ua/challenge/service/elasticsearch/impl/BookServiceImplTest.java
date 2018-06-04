@@ -14,6 +14,8 @@ import ua.challenge.entity.elasticsearch.FieldIndex;
 import ua.challenge.entity.elasticsearch.Publisher;
 import ua.challenge.service.elasticsearch.BookService;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,39 +28,36 @@ public class BookServiceImplTest {
     @Autowired
     private BookService bookService;
 
-
-
     @Autowired
     private ElasticsearchTemplate esTemplate;
 
     @Before
     public void before() {
-        esTemplate.deleteIndex(FieldIndex.class);
-        esTemplate.createIndex(FieldIndex.class);
-        esTemplate.putMapping(FieldIndex.class);
-        esTemplate.refresh(FieldIndex.class);
+//        esTemplate.deleteIndex(FieldIndex.class);
+//        esTemplate.createIndex(FieldIndex.class);
+//        esTemplate.putMapping(FieldIndex.class);
+//        esTemplate.refresh(FieldIndex.class);
 
-//        esTemplate.deleteIndex(Book.class);
-//        esTemplate.createIndex(Book.class);
-//        esTemplate.putMapping(Book.class);
-//        esTemplate.refresh(Book.class);
+        esTemplate.deleteIndex(Book.class);
+        esTemplate.createIndex(Book.class);
+        esTemplate.putMapping(Book.class);
+        esTemplate.refresh(Book.class);
     }
 
     @Test
     public void testSave() {
-        System.out.println("Test");
-//        Book book = new Book("1001", "Elasticsearch Basics", "Rambabu Posa", new Date(), new Publisher("CoolPrint"));
-//        Book testBook = bookService.save(book);
+        Book book = new Book("1001", "Elasticsearch Basics", "Rambabu Posa", new Date(), new Publisher("CoolPrint"));
+        Book testBook = bookService.save(book);
 
-//        assertThat(testBook.getId()).isNotNull();
-//        assertThat(testBook.getTitle()).isEqualTo(book.getTitle());
-//        assertThat(testBook.getAuthor()).isEqualTo(book.getAuthor());
-//        assertThat(testBook.getReleaseDate()).isEqualTo(book.getReleaseDate());
+        assertThat(testBook.getId()).isNotNull();
+        assertThat(testBook.getTitle()).isEqualTo(book.getTitle());
+        assertThat(testBook.getAuthor()).isEqualTo(book.getAuthor());
+        assertThat(testBook.getReleaseDate()).isEqualTo(book.getReleaseDate());
     }
 
-    @Test
+    /*@Test
     public void testFindOne() {
-        Book book = new Book("1001", "Elasticsearch Basics", "Rambabu Posa", new Date(), new Publisher("CoolPrint"));
+        Book book = new Book("1002", "Elasticsearch Basics", "Rambabu Posa", new Date(), new Publisher("CoolPrint"));
         bookService.save(book);
 
         Book testBook = bookService.findOne(book.getId());
@@ -137,4 +136,10 @@ public class BookServiceImplTest {
         Book testBook = bookService.findOne(book.getId());
         assertThat(testBook).isNull();
     }
+
+    @Test
+    public void testDate() {
+        Date startDate = java.sql.Timestamp.valueOf(LocalDateTime.from(LocalDateTime.now()).minusDays(7));
+        System.out.println(startDate);
+    }*/
 }

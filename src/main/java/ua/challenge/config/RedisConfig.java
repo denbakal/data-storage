@@ -10,9 +10,9 @@ import org.springframework.data.redis.serializer.GenericToStringSerializer;
 
 @Configuration
 //@ComponentScan("ua.challenge.redis")
-@EnableRedisRepositories(basePackages = "ua.challenge.redis")
+//@EnableRedisRepositories(basePackages = "ua.challenge.redis")
 public class RedisConfig {
-    @Bean
+    /*@Bean
     public JedisConnectionFactory jedisConnectionFactory() {
         JedisConnectionFactory factory = new JedisConnectionFactory();
         factory.setHostName("localhost");
@@ -27,5 +27,5 @@ public class RedisConfig {
         template.setValueSerializer(new GenericToStringSerializer<>(Object.class));
         template.setEnableTransactionSupport(true);
         return template;
-    }
+    }*/
 }

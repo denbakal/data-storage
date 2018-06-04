@@ -7,9 +7,11 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.elasticsearch.client.NodeClientFactoryBean;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.EntityMapper;
@@ -33,17 +35,13 @@ public class ElasticsearchConfig {
 
     @Bean
     public Client client() throws Exception {
-
-        Settings esSettings = Settings.settingsBuilder()
+        Settings settings = Settings.builder()
                 .put("cluster.name", elasticsearchClusterName)
-                .put("name","TestNode")
+                .put("node.name","IrbWvvz")
                 .build();
 
-        return TransportClient.builder()
-                .settings(esSettings)
-                .build()
-                .addTransportAddress(
-                        new InetSocketTransportAddress(InetAddress.getByName(elasticsearchHost), elasticsearchPort));
+        return new PreBuiltTransportClient(settings)
+                .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(elasticsearchHost), elasticsearchPort));
     }
 
     @Bean

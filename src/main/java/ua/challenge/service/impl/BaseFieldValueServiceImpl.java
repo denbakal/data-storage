@@ -4,12 +4,12 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.ArrayUtils;
+//import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.dao.DataAccessException;
-import org.springframework.data.cassandra.core.CassandraTemplate;
+//import org.springframework.data.cassandra.core.CassandraTemplate;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.StringRedisConnection;
@@ -67,20 +67,20 @@ public class BaseFieldValueServiceImpl implements BaseFieldValueService {
     @Autowired
     private BaseLaneValueMapper baseLaneValueMapper;
 
-    @Autowired
-    private CassandraTemplate cassandraTemplate;
+//    @Autowired
+//    private CassandraTemplate cassandraTemplate;
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
-    @Autowired
-    private TableValueRepository tableValueRepository;
+//    @Autowired
+//    private TableValueRepository tableValueRepository;
 
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
 
-    @Autowired
-    private FieldIndexRepository fieldIndexRepository;
+//    @Autowired
+//    private FieldIndexRepository fieldIndexRepository;
 
     @Override
     @Loggable
@@ -110,7 +110,7 @@ public class BaseFieldValueServiceImpl implements BaseFieldValueService {
         Date startDate = java.sql.Timestamp.valueOf(LocalDateTime.from(LocalDateTime.now()).minusDays(7));
         Date endDate = java.sql.Timestamp.valueOf(LocalDateTime.from(LocalDateTime.now()).plusDays(3));
 
-        for (String value : values) {
+        /*for (String value : values) {
             try {
                 JSONObject lane = new JSONObject(value);
                 ObjectMapper mapper = new ObjectMapper();
@@ -133,7 +133,7 @@ public class BaseFieldValueServiceImpl implements BaseFieldValueService {
         log.debug("Count index of fields: {}", fieldIndices.size());
 
         // bulk index
-        this.fieldIndexRepository.save(fieldIndices);
+        this.fieldIndexRepository.save(fieldIndices);*/
     }
 
     @Override
@@ -146,7 +146,7 @@ public class BaseFieldValueServiceImpl implements BaseFieldValueService {
         if (ColumnInsertType.INSERT == type) {
             for (Map<String, String> dataLane : data) {
                 for (Map.Entry<String, String> entry : dataLane.entrySet()) {
-                    this.cassandraTemplate.insert(new TableData(TABLE_ID, VERSION, entry.getKey(), rowIndex, entry.getValue()));
+//                    this.cassandraTemplate.insert(new TableData(TABLE_ID, VERSION, entry.getKey(), rowIndex, entry.getValue()));
                 }
                 rowIndex++;
             }
@@ -170,11 +170,11 @@ public class BaseFieldValueServiceImpl implements BaseFieldValueService {
             }
             System.out.println("elapsed time: " + (System.currentTimeMillis() - startTime));
 
-            this.cassandraTemplate.ingest(insertSql, tableData);
+//            this.cassandraTemplate.ingest(insertSql, tableData);
         } else if (ColumnInsertType.ASYNC == type) {
             for (Map<String, String> dataLane : data) {
                 for (Map.Entry<String, String> entry : dataLane.entrySet()) {
-                    this.cassandraTemplate.insertAsynchronously(new TableData(TABLE_ID, VERSION, entry.getKey(), rowIndex, entry.getValue()));
+//                    this.cassandraTemplate.insertAsynchronously(new TableData(TABLE_ID, VERSION, entry.getKey(), rowIndex, entry.getValue()));
                 }
                 rowIndex++;
             }
@@ -214,7 +214,7 @@ public class BaseFieldValueServiceImpl implements BaseFieldValueService {
 
     @Override
     public void removeColumnData() {
-        this.cassandraTemplate.truncate("datatable");
+//        this.cassandraTemplate.truncate("datatable");
     }
 
     @Override
@@ -308,26 +308,27 @@ public class BaseFieldValueServiceImpl implements BaseFieldValueService {
     @Override
     @Loggable
     public List<String> getDocumentValues(Long id) {
-        TableValue tableValue = this.tableValueRepository.findByTableId(id);
-        return tableValue == null ? Collections.emptyList() : tableValue.getLanes();
+//        TableValue tableValue = this.tableValueRepository.findByTableId(id);
+//        return tableValue == null ? Collections.emptyList() : tableValue.getLanes();
+        return Collections.emptyList();
     }
 
     @Override
     @Loggable
     @Transactional
     public void storeDocumentData(List<String> data) {
-        TableValue tableValue = new TableValue();
+        /*TableValue tableValue = new TableValue();
         tableValue.setTableId(1L);
         tableValue.setLanes(data);
 
-        this.tableValueRepository.save(tableValue);
+        this.tableValueRepository.save(tableValue);*/
     }
 
     @Override
     @Loggable
     @Transactional
     public void removeDocumentData() {
-        this.tableValueRepository.deleteAll();
+//        this.tableValueRepository.deleteAll();
     }
 
     @Override

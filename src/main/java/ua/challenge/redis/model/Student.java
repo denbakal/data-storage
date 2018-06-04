@@ -10,7 +10,7 @@ import java.io.Serializable;
 //@AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@RedisHash("Student")
+//@RedisHash("Student")
 public class Student implements Serializable {
     public enum Gender {
         MALE, FEMALE

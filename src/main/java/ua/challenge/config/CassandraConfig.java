@@ -5,21 +5,21 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.data.cassandra.config.CassandraClusterFactoryBean;
-import org.springframework.data.cassandra.config.CassandraSessionFactoryBean;
-import org.springframework.data.cassandra.config.SchemaAction;
-import org.springframework.data.cassandra.convert.CassandraConverter;
-import org.springframework.data.cassandra.convert.MappingCassandraConverter;
-import org.springframework.data.cassandra.core.CassandraTemplate;
-import org.springframework.data.cassandra.mapping.BasicCassandraMappingContext;
-import org.springframework.data.cassandra.mapping.CassandraMappingContext;
-import org.springframework.data.cassandra.repository.config.EnableCassandraRepositories;
+//import org.springframework.data.cassandra.config.CassandraClusterFactoryBean;
+//import org.springframework.data.cassandra.config.CassandraSessionFactoryBean;
+//import org.springframework.data.cassandra.config.SchemaAction;
+//import org.springframework.data.cassandra.convert.CassandraConverter;
+//import org.springframework.data.cassandra.convert.MappingCassandraConverter;
+//import org.springframework.data.cassandra.core.CassandraTemplate;
+//import org.springframework.data.cassandra.mapping.BasicCassandraMappingContext;
+//import org.springframework.data.cassandra.mapping.CassandraMappingContext;
+//import org.springframework.data.cassandra.repository.config.EnableCassandraRepositories;
 
-@Configuration
-@PropertySource(value = {"classpath:cassandra.properties"})
-@EnableCassandraRepositories(basePackages = "ua.challenge.repository")
+//@Configuration
+//@PropertySource(value = {"classpath:cassandra.properties"})
+//@EnableCassandraRepositories(basePackages = "ua.challenge.repository")
 public class CassandraConfig {
-    @Autowired
+    /*@Autowired
     private Environment environment;
 
     protected String getKeyspaceName() {
@@ -34,7 +34,7 @@ public class CassandraConfig {
         return cluster;
     }
 
-    @Bean
+    *//*@Bean
     public CassandraMappingContext cassandraMapping() {
         return new BasicCassandraMappingContext();
     }
@@ -42,7 +42,7 @@ public class CassandraConfig {
     @Bean
     public CassandraConverter converter() {
         return new MappingCassandraConverter(cassandraMapping());
-    }
+    }*//*
 
     @Bean
     public CassandraSessionFactoryBean session() {
@@ -50,12 +50,12 @@ public class CassandraConfig {
         CassandraSessionFactoryBean session = new CassandraSessionFactoryBean();
         session.setCluster(cluster().getObject());
         session.setKeyspaceName(environment.getProperty("cassandra.keyspace"));
-        session.setConverter(converter());
+//        session.setConverter(converter());
 
-        /*
+        *//*
             SchemaAction.CREATE_IF_NOT_EXISTS;
             to allow Spring to create tables that do not exist if there is a entity with @Table defined
-        */
+        *//*
         session.setSchemaAction(SchemaAction.NONE);
 
         return session;
@@ -64,5 +64,5 @@ public class CassandraConfig {
     @Bean
     public CassandraTemplate cassandraTemplate() throws Exception {
         return new CassandraTemplate(session().getObject(), converter());
-    }
+    }*/
 }

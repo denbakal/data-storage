@@ -8,15 +8,15 @@ import org.springframework.data.elasticsearch.annotations.*;
 
 import java.util.Date;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
-@Document(indexName = "field_index", type = "fields")
-@Setting(settingPath = "/elasticsearch/field/settings/settings.json")
+//@Getter
+//@Setter
+//@AllArgsConstructor
+//@NoArgsConstructor
+//@ToString
+//@Document(indexName = "field_index", type = "fields")
+//@Setting(settingPath = "/elasticsearch/field/settings/settings.json")
 public class FieldIndex {
-    @Id
+    /*@Id
     private String id;
 
     @Field(type = FieldType.Long)
@@ -49,5 +49,5 @@ public class FieldIndex {
 
     @Field(type = FieldType.String)
     @JsonProperty("SERVICE")
-    private String service;
+    private String service;*/
 }

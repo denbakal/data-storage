@@ -18,17 +18,11 @@ import java.util.List;
 
 @Service
 public class BookServiceImpl implements BookService {
-
+    @Autowired
     private BookRepository bookRepository;
 
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
-
-    @Autowired
-    public void setBookRepository(BookRepository bookRepository) {
-        this.bookRepository = bookRepository;
-    }
-
 
     public Book save(Book book) {
         return bookRepository.save(book);
@@ -36,10 +30,6 @@ public class BookServiceImpl implements BookService {
 
     public void delete(Book book) {
         bookRepository.delete(book);
-    }
-
-    public Book findOne(String id) {
-        return bookRepository.findOne(id);
     }
 
     public Iterable<Book> findAll() {

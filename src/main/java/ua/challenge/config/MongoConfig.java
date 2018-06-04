@@ -6,10 +6,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
-@Configuration
-@EnableMongoRepositories(basePackages = "ua.challenge.repository.mongo")
-public class MongoConfig extends AbstractMongoConfiguration {
-    @Override
+//@Configuration
+//@EnableMongoRepositories(basePackages = "ua.challenge.repository.mongo")
+public class MongoConfig {
+    /*@Override
     protected String getDatabaseName() {
         return "test";
     }
@@ -17,5 +17,5 @@ public class MongoConfig extends AbstractMongoConfiguration {
     @Override
     public Mongo mongo() throws Exception {
         return new MongoClient("localhost", 27017);
-    }
+    }*/
 }

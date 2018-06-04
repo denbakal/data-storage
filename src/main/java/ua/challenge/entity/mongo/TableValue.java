@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @ToString
-@Document
+//@Document
 public class TableValue {
     Long tableId;
     List<String> lanes;
