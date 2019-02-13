@@ -39,7 +39,8 @@ public class BookServiceImpl implements BookService {
     }
 
     public Book findOne(String id) {
-        return bookRepository.findOne(id);
+//        return bookRepository.f(id);
+        return null;
     }
 
     public Iterable<Book> findAll() {
