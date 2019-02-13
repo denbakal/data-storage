@@ -22,21 +22,9 @@ public class Address {
     private Long id;
     private String gender;
 
-    @MultiField(
-            mainField = @Field(type = FieldType.String),
-            otherFields = {
-                    @InnerField(suffix = "autocomplete", type = FieldType.String, indexAnalyzer = "ngram", searchAnalyzer = "simple")
-            }
-    )
     private String country;
     private String zipCode;
 
-    @MultiField(
-            mainField = @Field(type = FieldType.String),
-            otherFields = {
-                    @InnerField(suffix = "autocomplete", type = FieldType.String, indexAnalyzer = "ngram", searchAnalyzer = "simple")
-            }
-    )
     private String city;
     private String countryCode;
     @Embedded

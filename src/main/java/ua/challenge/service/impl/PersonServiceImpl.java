@@ -2,20 +2,6 @@ package ua.challenge.service.impl;
 
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.common.Strings;
-import org.elasticsearch.common.unit.Fuzziness;
-import org.elasticsearch.index.query.*;
-import org.elasticsearch.search.aggregations.Aggregation;
-import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.Aggregations;
-import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation;
-import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramInterval;
-import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
-import org.elasticsearch.search.aggregations.bucket.histogram.InternalDateHistogram;
-import org.elasticsearch.search.aggregations.bucket.histogram.InternalHistogram;
-import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
-import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.ResultsExtractor;
@@ -44,10 +30,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
-
-import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-import static org.elasticsearch.index.query.QueryBuilders.multiMatchQuery;
 
 @Log4j2
 @Service
@@ -114,7 +96,7 @@ public class PersonServiceImpl implements PersonService {
         }
 
         //bulk index
-        this.indexRepository.save(personIndexList);
+        this.indexRepository.saveAll(personIndexList);
 
         long took = System.currentTimeMillis() - start;
 
@@ -131,7 +113,7 @@ public class PersonServiceImpl implements PersonService {
     @Loggable
     public SearchResultDto search(String searchText) {
         SearchResultDto result = new SearchResultDto();
-        QueryBuilder queryBuilder;
+        /*QueryBuilder queryBuilder;
 
         if (Strings.isEmpty(searchText)) {
             queryBuilder = QueryBuilders.matchAllQuery();
@@ -188,14 +170,14 @@ public class PersonServiceImpl implements PersonService {
         result.setYears(byYears);
         log.debug("byYears: {}", byYears);
 
-        result.setPersons(this.personIndexMapper.fromPersonIndexList(this.elasticsearchTemplate.queryForList(query, PersonIndex.class)));
+        result.setPersons(this.personIndexMapper.fromPersonIndexList(this.elasticsearchTemplate.queryForList(query, PersonIndex.class)));*/
         return result;
     }
 
     @Override
     @Loggable
     public List<PersonDto> advancedSearch(String name, String country, String city) {
-        QueryBuilder queryBuilder;
+        /*QueryBuilder queryBuilder;
 
         if (Strings.isEmpty(name) && Strings.isEmpty(country) && Strings.isEmpty(city)) {
             queryBuilder = QueryBuilders.matchAllQuery();
@@ -221,15 +203,16 @@ public class PersonServiceImpl implements PersonService {
             }
 
             queryBuilder = boolQueryBuilder;
-        }
+        }*/
 
-        SearchQuery query = new NativeSearchQueryBuilder()
+        /*SearchQuery query = new NativeSearchQueryBuilder()
                 .withQuery(queryBuilder)
                 .build();
 
-        log.debug("Advanced Search query: {}", query.getQuery().toString());
+        log.debug("Advanced Search query: {}", query.getQuery().toString());*/
 
 //        return this.personMapper.fromPersonList(this.personRepository.search(name, country, city));
-        return this.personIndexMapper.fromPersonIndexList(this.elasticsearchTemplate.queryForList(query, PersonIndex.class));
+//        return this.personIndexMapper.fromPersonIndexList(this.elasticsearchTemplate.queryForList(query, PersonIndex.class));
+        return null;
     }
 }

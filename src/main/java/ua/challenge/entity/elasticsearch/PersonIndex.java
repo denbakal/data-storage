@@ -22,24 +22,13 @@ public class PersonIndex {
 
 //    @Field(type = FieldType.String, analyzer = "ngram")
 //    @Field(type = FieldType.String, analyzer = "ngram", searchAnalyzer = "simple")
-    @MultiField(
-            mainField = @Field(type = FieldType.String),
-            otherFields = {
-                    @InnerField(suffix = "autocomplete", type = FieldType.String, indexAnalyzer = "ngram", searchAnalyzer = "simple")
-            }
-    )
     private String name;
 
     @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "dd.MM.yyyy HH:mm:ss.SSS")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy HH:mm:ss.SSS")
     private Date dateOfBirth;
 
-    @MultiField(
-            mainField = @Field(type = FieldType.String),
-            otherFields = {
-                    @InnerField(suffix = "autocomplete", type = FieldType.String, indexAnalyzer = "ngram", searchAnalyzer = "simple")
-            }
-    )
+
     private String gender;
     private Integer children;
 
