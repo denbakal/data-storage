@@ -2,6 +2,12 @@ package ua.challenge.service.impl;
 
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
+import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.client.transport.NoNodeAvailableException;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.reindex.BulkByScrollResponse;
+import org.elasticsearch.index.reindex.DeleteByQueryAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.ResultsExtractor;
@@ -9,6 +15,8 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import ua.challenge.aspect.Loggable;
 import ua.challenge.dto.BucketDto;
 import ua.challenge.dto.PersonDto;
@@ -20,6 +28,7 @@ import ua.challenge.mapper.PersonMapper;
 import ua.challenge.repository.PersonRepository;
 import ua.challenge.repository.elasticsearch.PersonIndexRepository;
 import ua.challenge.service.PersonService;
+import ua.challenge.service.transaction.handler.PersonIndexHandler;
 import ua.challenge.util.PersonGenerator;
 
 import java.io.IOException;
@@ -49,18 +58,26 @@ public class PersonServiceImpl implements PersonService {
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
 
+    @Autowired
+    private Client client;
+
+    @Autowired
+    private PersonIndexHandler personIndexHandler;
+
     private AtomicInteger currentItem = new AtomicInteger();
 
     @Override
+    @Transactional
     public void save(PersonDto personDto) {
-
+        this.personMapper.fromPerson(this.personRepository.save(this.personMapper.toPerson(personDto)));
     }
 
     @Override
-    @SneakyThrows
-    @Loggable
+//    @Loggable
     @Transactional
-    public void init(long size) {
+    public void init(long size) throws RuntimeException, IOException {
+        TransactionSynchronizationManager.registerSynchronization(this.personIndexHandler);
+
         long start = 0;
         currentItem.set(0);
 
@@ -95,8 +112,19 @@ public class PersonServiceImpl implements PersonService {
             currentItem.incrementAndGet();
         }
 
-        //bulk index
         this.indexRepository.saveAll(personIndexList);
+
+        //bulk index
+        /*try {
+            this.indexRepository.saveAll(personIndexList);
+        } catch (ElasticsearchException exception) {
+            log.error(exception);
+            throw new ElasticsearchException(exception.getDetailedMessage());
+        }*/
+
+        if (true) {
+            throw new ElasticsearchException("test");
+        }
 
         long took = System.currentTimeMillis() - start;
 
